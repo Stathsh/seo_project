@@ -27,9 +27,7 @@ export default defineConfig({
   site: resolveSiteUrl(),
   integrations: [
     tailwind(),
-    sitemap({
-      filter: (page) => !page.includes('/admin'),
-    }),
+    sitemap(),
     mdx(),
   ],
   output: 'static',
