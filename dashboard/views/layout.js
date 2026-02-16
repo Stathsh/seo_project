@@ -62,6 +62,9 @@ export function layout(title, content, { activePage = '', siteName = '', sites =
             ${n.label}
           </a>
         `).join('')}
+        <a href="/logout" class="ml-2 px-3 py-1.5 text-sm rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50">
+          Logout
+        </a>
       </nav>
     </div>
   </header>
