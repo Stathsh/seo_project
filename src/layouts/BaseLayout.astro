@@ -1,0 +1,117 @@
+---
+import SEO from '../components/SEO.astro';
+import { getSiteConfig } from '../lib/site-config';
+
+interface Props {
+  title: string;
+  description: string;
+  slug?: string;
+  type?: string;
+  datePublished?: string;
+  dateModified?: string;
+  category?: string;
+  image?: string;
+  faq?: Array<{ question: string; answer: string }>;
+  products?: Array<any>;
+  breadcrumbs?: Array<{ name: string; url: string }>;
+}
+
+const props = Astro.props;
+const config = getSiteConfig();
+const siteName = config.name;
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || config.url;
+---
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <SEO {...props} siteName={siteName} siteUrl={siteUrl} authorName={config.author.name} />
+</head>
+<body class="bg-white text-gray-800 font-sans antialiased">
+  <!-- Header -->
+  <header class="border-b border-gray-200 bg-white sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center gap-2 text-xl font-bold text-brand-700 hover:text-brand-800 transition-colors">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="2">
+            <path d="M16 4l12 7v10l-12 7L4 21V11l12-7z" />
+            <circle cx="16" cy="16" r="4" />
+          </svg>
+          {siteName}
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+          {config.navigation.map(item => (
+            <a href={item.href} class="hover:text-brand-600 transition-colors">{item.label}</a>
+          ))}
+        </nav>
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-600 hover:text-gray-900" aria-label="Toggle menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-gray-100">
+        <nav class="flex flex-col gap-2 pt-3 text-sm font-medium text-gray-600">
+          {config.navigation.map(item => (
+            <a href={item.href} class="py-2 hover:text-brand-600">{item.label}</a>
+          ))}
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-50 border-t border-gray-200 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <a href="/" class="text-lg font-bold text-brand-700">{siteName}</a>
+          <p class="mt-2 text-sm text-gray-500">
+            {config.branding.footerDescription}
+          </p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-900 text-sm mb-3">Categories</h4>
+          <ul class="space-y-2 text-sm text-gray-500">
+            {config.navigation.map(item => (
+              <li><a href={item.href} class="hover:text-brand-600">{item.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-900 text-sm mb-3">About</h4>
+          <ul class="space-y-2 text-sm text-gray-500">
+            <li><a href="/about/" class="hover:text-brand-600">About Us</a></li>
+            <li><a href="/contact/" class="hover:text-brand-600">Contact</a></li>
+            <li><a href="/privacy/" class="hover:text-brand-600">Privacy Policy</a></li>
+            <li><a href="/terms/" class="hover:text-brand-600">Terms of Use</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-8 pt-8 border-t border-gray-200">
+        <p class="text-xs text-gray-400">
+          &copy; {new Date().getFullYear()} {siteName}. All rights reserved. As an Amazon Associate and affiliate partner, we earn from qualifying purchases. Product prices and availability are accurate as of the date/time indicated and are subject to change.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    btn?.addEventListener('click', () => {
+      menu?.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+---
+import { getSiteConfig } from '../lib/site-config';
+const config = getSiteConfig();
+const { author } = config;
+---
+
+<div class="mt-12 p-6 bg-gray-50 rounded-xl border border-gray-200">
+  <div class="flex items-start gap-4">
+    <div class="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
+      <span class="text-2xl font-bold text-brand-700">{author.initials}</span>
+    </div>
+    <div>
+      <p class="font-bold text-gray-900">{author.name}</p>
+      <p class="text-sm text-gray-500 mt-0.5">{author.title}</p>
+      <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+        {author.bio}
+      </p>
+    </div>
+  </div>
+</div>

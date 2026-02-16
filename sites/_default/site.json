@@ -1,0 +1,29 @@
+{
+  "id": "smart-home",
+  "name": "SmartHomePicks",
+  "url": "https://smarthomepicks.com",
+  "author": {
+    "name": "Alex Chen",
+    "title": "Smart Home Editor",
+    "bio": "Alex has been testing and reviewing smart home devices for over 5 years. He's personally installed 50+ security cameras, tested every major smart speaker, and automated his entire home. When he's not geeking out over the latest Matter-compatible gadget, he's probably adjusting his smart thermostat schedule for the tenth time this week.",
+    "initials": "AC"
+  },
+  "affiliateTag": "smarthome-20",
+  "branding": {
+    "heroTitle": "Smart home advice you can <span class=\"text-brand-600\">actually trust</span>",
+    "heroDescription": "We test and compare smart home devices so you don't waste money on the wrong one. No corporate fluff — just honest opinions from someone who's installed it all.",
+    "footerDescription": "Expert smart home reviews and comparisons to help you build a smarter, more connected home."
+  },
+  "navigation": [
+    { "label": "Security Cameras", "href": "/security-cameras/" },
+    { "label": "Thermostats", "href": "/smart-thermostats/" },
+    { "label": "Smart Speakers", "href": "/smart-speakers/" },
+    { "label": "Doorbells", "href": "/smart-doorbells/" },
+    { "label": "Lighting", "href": "/smart-lighting/" }
+  ],
+  "heroCTAs": [
+    { "label": "Security Cameras", "href": "/security-cameras/", "primary": true },
+    { "label": "Smart Thermostats", "href": "/smart-thermostats/" },
+    { "label": "Smart Speakers", "href": "/smart-speakers/" }
+  ]
+}

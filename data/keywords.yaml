@@ -1,0 +1,295 @@
+# Seed keywords for programmatic SEO content generation
+# Types: best-for, vs, info
+
+# === BEST-FOR (Money Pages) ===
+
+- type: best-for
+  keyword: "best security camera for apartments"
+  slug: "best-security-camera-for-apartments"
+  category: "security-cameras"
+  products:
+    - id: "ring-indoor-cam-2nd-gen"
+    - id: "wyze-cam-v3"
+    - id: "blink-mini-2"
+    - id: "google-nest-cam-battery"
+
+- type: best-for
+  keyword: "best smart thermostat for energy savings"
+  slug: "best-smart-thermostat-for-energy-savings"
+  category: "smart-thermostats"
+  products:
+    - id: "ecobee-smart-thermostat-premium"
+    - id: "google-nest-learning-thermostat-4th-gen"
+
+- type: best-for
+  keyword: "best smart speaker for home automation"
+  slug: "best-smart-speaker-for-home-automation"
+  category: "smart-speakers"
+  products:
+    - id: "amazon-echo-dot-5th-gen"
+    - id: "apple-homepod-mini"
+
+- type: best-for
+  keyword: "best video doorbell for package theft"
+  slug: "best-video-doorbell-for-package-theft"
+  category: "smart-doorbells"
+  products:
+    - id: "ring-video-doorbell-4"
+    - id: "google-nest-doorbell-wired-2nd-gen"
+
+- type: best-for
+  keyword: "best security camera for front door"
+  slug: "best-security-camera-for-front-door"
+  category: "security-cameras"
+  products:
+    - id: "arlo-pro-5"
+    - id: "ring-indoor-cam-2nd-gen"
+    - id: "google-nest-cam-battery"
+
+- type: best-for
+  keyword: "best security camera for night vision"
+  slug: "best-security-camera-for-night-vision"
+  category: "security-cameras"
+  products:
+    - id: "arlo-pro-5"
+    - id: "wyze-cam-v3"
+    - id: "ring-indoor-cam-2nd-gen"
+
+- type: best-for
+  keyword: "best outdoor security camera wireless"
+  slug: "best-outdoor-security-camera-wireless"
+  category: "security-cameras"
+  products:
+    - id: "arlo-pro-5"
+    - id: "google-nest-cam-battery"
+    - id: "wyze-cam-v3"
+
+- type: best-for
+  keyword: "best budget security camera system"
+  slug: "best-budget-security-camera-system"
+  category: "security-cameras"
+  products:
+    - id: "wyze-cam-v3"
+    - id: "blink-mini-2"
+    - id: "ring-indoor-cam-2nd-gen"
+
+- type: best-for
+  keyword: "best smart thermostat for heat pump"
+  slug: "best-smart-thermostat-for-heat-pump"
+  category: "smart-thermostats"
+  products:
+    - id: "ecobee-smart-thermostat-premium"
+    - id: "google-nest-learning-thermostat-4th-gen"
+
+- type: best-for
+  keyword: "best smart speaker for music"
+  slug: "best-smart-speaker-for-music"
+  category: "smart-speakers"
+  products:
+    - id: "apple-homepod-mini"
+    - id: "amazon-echo-dot-5th-gen"
+
+- type: best-for
+  keyword: "best smart speaker for elderly"
+  slug: "best-smart-speaker-for-elderly"
+  category: "smart-speakers"
+  products:
+    - id: "amazon-echo-dot-5th-gen"
+    - id: "apple-homepod-mini"
+
+- type: best-for
+  keyword: "best smart light bulbs for bedroom"
+  slug: "best-smart-light-bulbs-for-bedroom"
+  category: "smart-lighting"
+  products:
+    - id: "philips-hue-starter-kit"
+
+- type: best-for
+  keyword: "best smart plug for energy monitoring"
+  slug: "best-smart-plug-for-energy-monitoring"
+  category: "smart-plugs"
+  products:
+    - id: "tp-link-kasa-smart-plug-ep25"
+
+- type: best-for
+  keyword: "best robot vacuum for pet hair"
+  slug: "best-robot-vacuum-for-pet-hair"
+  category: "robot-vacuums"
+  products:
+    - id: "roborock-q-revo-maxv"
+
+- type: best-for
+  keyword: "best video doorbell without subscription"
+  slug: "best-video-doorbell-without-subscription"
+  category: "smart-doorbells"
+  products:
+    - id: "google-nest-doorbell-wired-2nd-gen"
+    - id: "ring-video-doorbell-4"
+
+- type: best-for
+  keyword: "best smart home hub for beginners"
+  slug: "best-smart-home-hub-for-beginners"
+  category: "smart-hubs"
+  products:
+    - id: "samsung-smartthings-station"
+    - id: "amazon-echo-dot-5th-gen"
+
+- type: best-for
+  keyword: "best smart lighting starter kit"
+  slug: "best-smart-lighting-starter-kit"
+  category: "smart-lighting"
+  products:
+    - id: "philips-hue-starter-kit"
+
+- type: best-for
+  keyword: "best robot vacuum under 500"
+  slug: "best-robot-vacuum-under-500"
+  category: "robot-vacuums"
+  products:
+    - id: "roborock-q-revo-maxv"
+
+# === VS (Comparison Pages) ===
+
+- type: vs
+  keyword: "ring vs arlo security cameras"
+  slug: "ring-vs-arlo-security-cameras"
+  category: "security-cameras"
+  products:
+    - id: "ring-indoor-cam-2nd-gen"
+    - id: "arlo-pro-5"
+
+- type: vs
+  keyword: "ecobee vs nest thermostat"
+  slug: "ecobee-vs-nest-thermostat"
+  category: "smart-thermostats"
+  products:
+    - id: "ecobee-smart-thermostat-premium"
+    - id: "google-nest-learning-thermostat-4th-gen"
+
+- type: vs
+  keyword: "echo dot vs homepod mini"
+  slug: "echo-dot-vs-homepod-mini"
+  category: "smart-speakers"
+  products:
+    - id: "amazon-echo-dot-5th-gen"
+    - id: "apple-homepod-mini"
+
+- type: vs
+  keyword: "ring doorbell vs nest doorbell"
+  slug: "ring-doorbell-vs-nest-doorbell"
+  category: "smart-doorbells"
+  products:
+    - id: "ring-video-doorbell-4"
+    - id: "google-nest-doorbell-wired-2nd-gen"
+
+- type: vs
+  keyword: "blink vs wyze cameras"
+  slug: "blink-vs-wyze-cameras"
+  category: "security-cameras"
+  products:
+    - id: "blink-mini-2"
+    - id: "wyze-cam-v3"
+
+- type: vs
+  keyword: "ring vs nest security cameras"
+  slug: "ring-vs-nest-security-cameras"
+  category: "security-cameras"
+  products:
+    - id: "ring-indoor-cam-2nd-gen"
+    - id: "google-nest-cam-battery"
+
+- type: vs
+  keyword: "ring vs blink security cameras"
+  slug: "ring-vs-blink-security-cameras"
+  category: "security-cameras"
+  products:
+    - id: "ring-indoor-cam-2nd-gen"
+    - id: "blink-mini-2"
+
+- type: vs
+  keyword: "arlo vs nest security cameras"
+  slug: "arlo-vs-nest-security-cameras"
+  category: "security-cameras"
+  products:
+    - id: "arlo-pro-5"
+    - id: "google-nest-cam-battery"
+
+- type: vs
+  keyword: "wyze vs arlo cameras"
+  slug: "wyze-vs-arlo-cameras"
+  category: "security-cameras"
+  products:
+    - id: "wyze-cam-v3"
+    - id: "arlo-pro-5"
+
+# === INFO (Supporting/Authority Pages) ===
+
+- type: info
+  keyword: "do security cameras work without wifi"
+  slug: "do-security-cameras-work-without-wifi"
+  category: "security-cameras"
+
+- type: info
+  keyword: "how to install a smart thermostat yourself"
+  slug: "how-to-install-smart-thermostat-yourself"
+  category: "smart-thermostats"
+
+- type: info
+  keyword: "are smart home devices worth it"
+  slug: "are-smart-home-devices-worth-it"
+  category: "smart-speakers"
+
+- type: info
+  keyword: "how to set up a smart home on a budget"
+  slug: "how-to-set-up-smart-home-on-a-budget"
+  category: "smart-speakers"
+
+- type: info
+  keyword: "what is matter smart home"
+  slug: "what-is-matter-smart-home"
+  category: "smart-hubs"
+
+- type: info
+  keyword: "how to choose a smart home hub"
+  slug: "how-to-choose-a-smart-home-hub"
+  category: "smart-hubs"
+
+- type: info
+  keyword: "smart home devices that work with apple homekit"
+  slug: "smart-home-devices-that-work-with-apple-homekit"
+  category: "smart-speakers"
+
+- type: info
+  keyword: "how much do smart thermostats save on energy bills"
+  slug: "how-much-do-smart-thermostats-save-on-energy-bills"
+  category: "smart-thermostats"
+
+- type: info
+  keyword: "do smart light bulbs use electricity when off"
+  slug: "do-smart-light-bulbs-use-electricity-when-off"
+  category: "smart-lighting"
+
+- type: info
+  keyword: "are smart plugs safe to leave on all the time"
+  slug: "are-smart-plugs-safe-to-leave-on-all-the-time"
+  category: "smart-plugs"
+
+- type: info
+  keyword: "are robot vacuums worth it"
+  slug: "are-robot-vacuums-worth-it"
+  category: "robot-vacuums"
+
+- type: info
+  keyword: "how do robot vacuums work"
+  slug: "how-do-robot-vacuums-work"
+  category: "robot-vacuums"
+
+- type: info
+  keyword: "can smart thermostats work without wifi"
+  slug: "can-smart-thermostats-work-without-wifi"
+  category: "smart-thermostats"
+
+- type: info
+  keyword: "how to secure your smart home from hackers"
+  slug: "how-to-secure-your-smart-home-from-hackers"
+  category: "security-cameras"

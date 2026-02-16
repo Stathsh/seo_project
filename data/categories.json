@@ -1,0 +1,40 @@
+{
+  "categories": [
+    {
+      "slug": "security-cameras",
+      "name": "Security Cameras",
+      "description": "Expert reviews and comparisons of the best home security cameras, from budget indoor cams to premium wireless outdoor systems.",
+      "icon": "camera"
+    },
+    {
+      "slug": "smart-thermostats",
+      "name": "Smart Thermostats",
+      "description": "In-depth reviews of smart thermostats that save energy and keep your home comfortable, including Nest, ecobee, and more.",
+      "icon": "thermometer"
+    },
+    {
+      "slug": "smart-speakers",
+      "name": "Smart Speakers",
+      "description": "Honest comparisons of Alexa, Google, and Siri smart speakers to find the best voice assistant for your home.",
+      "icon": "speaker"
+    },
+    {
+      "slug": "smart-lighting",
+      "name": "Smart Lighting",
+      "description": "Reviews of smart bulbs, light strips, and switches from Philips Hue, LIFX, Govee, and other top brands.",
+      "icon": "lightbulb"
+    },
+    {
+      "slug": "smart-doorbells",
+      "name": "Smart Doorbells",
+      "description": "Video doorbell reviews and comparisons covering Ring, Nest, Arlo, and other top contenders.",
+      "icon": "doorbell"
+    },
+    {
+      "slug": "robot-vacuums",
+      "name": "Robot Vacuums",
+      "description": "We test robot vacuums and mops so you don't have to. Find the best robot vacuum for your home and budget.",
+      "icon": "vacuum"
+    }
+  ]
+}

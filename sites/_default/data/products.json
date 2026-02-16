@@ -1,0 +1,484 @@
+{
+  "products": [
+    {
+      "id": "ring-indoor-cam-2nd-gen",
+      "name": "Ring Indoor Cam (2nd Gen)",
+      "brand": "Ring",
+      "category": "security-cameras",
+      "asin": "B0B6GKJP3D",
+      "price": 59.99,
+      "rating": 4.5,
+      "reviewCount": 12450,
+      "image": "/images/products/ring-indoor-cam.jpg",
+      "specs": {
+        "resolution": "1080p HD",
+        "fieldOfView": "140° diagonal",
+        "nightVision": "Color Night Vision",
+        "audio": "Two-way talk",
+        "storage": "Ring Protect subscription",
+        "connectivity": "Wi-Fi 6",
+        "power": "Plug-in",
+        "compatibility": "Alexa"
+      },
+      "pros": [
+        "Excellent Alexa integration",
+        "Affordable price point",
+        "Color night vision is sharp",
+        "Easy 5-minute setup"
+      ],
+      "cons": [
+        "Requires subscription for video storage",
+        "No local storage option",
+        "Only works with Alexa, not Google Home"
+      ]
+    },
+    {
+      "id": "wyze-cam-v3",
+      "name": "Wyze Cam v3",
+      "brand": "Wyze",
+      "category": "security-cameras",
+      "asin": "B09XK22VPQ",
+      "price": 35.98,
+      "rating": 4.3,
+      "reviewCount": 28900,
+      "image": "/images/products/wyze-cam-v3.jpg",
+      "specs": {
+        "resolution": "1080p HD",
+        "fieldOfView": "130° wide-angle",
+        "nightVision": "Starlight Sensor (color)",
+        "audio": "Two-way audio",
+        "storage": "microSD + Cam Plus optional",
+        "connectivity": "Wi-Fi 2.4GHz",
+        "power": "Plug-in (IP65 rated)",
+        "compatibility": "Alexa, Google Assistant"
+      },
+      "pros": [
+        "Unbeatable price under $36",
+        "Free local storage via microSD",
+        "IP65 weatherproof for outdoor use",
+        "Works with Alexa and Google"
+      ],
+      "cons": [
+        "2.4GHz Wi-Fi only",
+        "App can feel cluttered",
+        "Motion detection can be over-sensitive"
+      ]
+    },
+    {
+      "id": "blink-mini-2",
+      "name": "Blink Mini 2",
+      "brand": "Blink",
+      "category": "security-cameras",
+      "asin": "B0BWX32MFM",
+      "price": 29.99,
+      "rating": 4.2,
+      "reviewCount": 8750,
+      "image": "/images/products/blink-mini-2.jpg",
+      "specs": {
+        "resolution": "1080p HD",
+        "fieldOfView": "143° diagonal",
+        "nightVision": "Infrared",
+        "audio": "Two-way audio",
+        "storage": "Blink Subscription Plan",
+        "connectivity": "Wi-Fi 2.4GHz/5GHz",
+        "power": "Plug-in (weather-resistant with cover)",
+        "compatibility": "Alexa"
+      },
+      "pros": [
+        "Cheapest name-brand camera available",
+        "Built-in spotlight",
+        "Dual-band Wi-Fi support",
+        "Person detection included"
+      ],
+      "cons": [
+        "Cloud storage requires subscription",
+        "No pan/tilt capability",
+        "Limited to Alexa ecosystem"
+      ]
+    },
+    {
+      "id": "arlo-pro-5",
+      "name": "Arlo Pro 5",
+      "brand": "Arlo",
+      "category": "security-cameras",
+      "asin": "B0BZWMKJDW",
+      "price": 249.99,
+      "rating": 4.4,
+      "reviewCount": 6200,
+      "image": "/images/products/arlo-pro-5.jpg",
+      "specs": {
+        "resolution": "2K HDR",
+        "fieldOfView": "160° diagonal",
+        "nightVision": "Color Night Vision with spotlight",
+        "audio": "Two-way audio with siren",
+        "storage": "Arlo Secure subscription + local USB",
+        "connectivity": "Wi-Fi 6 / Direct to router",
+        "power": "Rechargeable battery or solar",
+        "compatibility": "Alexa, Google, HomeKit"
+      },
+      "pros": [
+        "Wire-free with 6-month battery life",
+        "2K HDR video quality is stunning",
+        "Works with all major smart home platforms",
+        "Built-in spotlight and siren"
+      ],
+      "cons": [
+        "Expensive upfront cost",
+        "Best features locked behind subscription",
+        "SmartHub no longer included"
+      ]
+    },
+    {
+      "id": "google-nest-cam-battery",
+      "name": "Google Nest Cam (Battery)",
+      "brand": "Google",
+      "category": "security-cameras",
+      "asin": "B09FGL9YDX",
+      "price": 179.99,
+      "rating": 4.3,
+      "reviewCount": 9800,
+      "image": "/images/products/google-nest-cam.jpg",
+      "specs": {
+        "resolution": "1080p HDR",
+        "fieldOfView": "130° diagonal",
+        "nightVision": "Night vision with HDR",
+        "audio": "Two-way audio",
+        "storage": "3 hours free cloud + Nest Aware",
+        "connectivity": "Wi-Fi + Bluetooth",
+        "power": "Rechargeable battery or wired",
+        "compatibility": "Google Home"
+      },
+      "pros": [
+        "3 hours of free cloud event storage",
+        "Magnetic mount makes installation trivial",
+        "Excellent Google Home integration",
+        "On-device AI processing for alerts"
+      ],
+      "cons": [
+        "1080p feels dated at this price",
+        "Only works with Google ecosystem",
+        "Battery life drops in cold weather"
+      ]
+    },
+    {
+      "id": "ecobee-smart-thermostat-premium",
+      "name": "ecobee Smart Thermostat Premium",
+      "brand": "ecobee",
+      "category": "smart-thermostats",
+      "asin": "B09XXTQPXC",
+      "price": 249.99,
+      "rating": 4.5,
+      "reviewCount": 5400,
+      "image": "/images/products/ecobee-premium.jpg",
+      "specs": {
+        "display": "3.5\" full-color touchscreen",
+        "sensors": "Built-in air quality + occupancy",
+        "voiceAssistant": "Built-in Alexa + Siri",
+        "compatibility": "Alexa, Google, HomeKit, SmartThings",
+        "features": "Air quality monitoring, radar occupancy",
+        "zoning": "SmartSensor support for room-by-room control",
+        "energyStar": "Yes",
+        "warranty": "3 years"
+      },
+      "pros": [
+        "Built-in air quality monitor is unique",
+        "Works with every smart home platform",
+        "Room-by-room temperature with SmartSensors",
+        "Built-in Alexa speaker"
+      ],
+      "cons": [
+        "Most expensive smart thermostat",
+        "SmartSensors sold separately",
+        "Large size may not suit all walls"
+      ]
+    },
+    {
+      "id": "google-nest-learning-thermostat-4th-gen",
+      "name": "Google Nest Learning Thermostat (4th Gen)",
+      "brand": "Google",
+      "category": "smart-thermostats",
+      "asin": "B0CWDH86MK",
+      "price": 279.99,
+      "rating": 4.4,
+      "reviewCount": 3200,
+      "image": "/images/products/nest-thermostat-4th-gen.jpg",
+      "specs": {
+        "display": "2.7\" borderless LCD",
+        "sensors": "Temperature, humidity, occupancy",
+        "voiceAssistant": "Google Assistant",
+        "compatibility": "Google Home, Alexa, Matter",
+        "features": "Auto-learning, Nest Temperature Sensor support",
+        "zoning": "Sensor-based room priority",
+        "energyStar": "Yes",
+        "warranty": "2 years"
+      },
+      "pros": [
+        "Gorgeous minimalist design",
+        "Learns your schedule automatically",
+        "Matter support for future-proofing",
+        "Energy savings up to 15% on cooling"
+      ],
+      "cons": [
+        "Most expensive in the Nest lineup",
+        "No built-in air quality sensor",
+        "Google Home app required for full features"
+      ]
+    },
+    {
+      "id": "amazon-echo-dot-5th-gen",
+      "name": "Amazon Echo Dot (5th Gen)",
+      "brand": "Amazon",
+      "category": "smart-speakers",
+      "asin": "B09B8V1LZ3",
+      "price": 49.99,
+      "rating": 4.6,
+      "reviewCount": 45000,
+      "image": "/images/products/echo-dot-5th.jpg",
+      "specs": {
+        "speaker": "1.73\" full-range driver",
+        "voiceAssistant": "Alexa",
+        "connectivity": "Wi-Fi, Bluetooth 5.0",
+        "audioFeatures": "Eero mesh Wi-Fi built-in",
+        "smartHome": "Zigbee hub + Matter + Thread",
+        "dimensions": "3.9\" x 3.9\" x 3.5\"",
+        "power": "15W adapter",
+        "extras": "Temperature sensor, tap gestures"
+      },
+      "pros": [
+        "Best value smart speaker under $50",
+        "Built-in smart home hub (Zigbee/Matter)",
+        "Doubles as Eero Wi-Fi extender",
+        "Improved audio over 4th gen"
+      ],
+      "cons": [
+        "Not great for music in large rooms",
+        "Privacy concerns with always-on mic",
+        "Locked into Amazon ecosystem"
+      ]
+    },
+    {
+      "id": "apple-homepod-mini",
+      "name": "Apple HomePod mini",
+      "brand": "Apple",
+      "category": "smart-speakers",
+      "asin": "B09JCMX8K8",
+      "price": 99.99,
+      "rating": 4.6,
+      "reviewCount": 18000,
+      "image": "/images/products/homepod-mini.jpg",
+      "specs": {
+        "speaker": "Full-range driver + dual passive radiators",
+        "voiceAssistant": "Siri",
+        "connectivity": "Wi-Fi 5, Bluetooth 5.0, Thread, UWB",
+        "audioFeatures": "Computational audio, stereo pair support",
+        "smartHome": "HomeKit, Matter hub",
+        "dimensions": "3.3\" x 3.3\"",
+        "power": "20W USB-C adapter",
+        "extras": "Temperature/humidity sensor, Intercom, Find My"
+      },
+      "pros": [
+        "Excellent sound quality for its size",
+        "Seamless Apple ecosystem integration",
+        "Thread border router for smart home",
+        "Built-in temperature and humidity sensor"
+      ],
+      "cons": [
+        "Siri is less capable than Alexa/Google",
+        "Limited to Apple Music for full voice control",
+        "No Bluetooth audio input from non-Apple devices"
+      ]
+    },
+    {
+      "id": "philips-hue-starter-kit",
+      "name": "Philips Hue White & Color A19 Starter Kit",
+      "brand": "Philips Hue",
+      "category": "smart-lighting",
+      "asin": "B096YFWVVS",
+      "price": 134.99,
+      "rating": 4.7,
+      "reviewCount": 22000,
+      "image": "/images/products/philips-hue-starter.jpg",
+      "specs": {
+        "bulbs": "3x A19 color bulbs (75W equivalent)",
+        "hub": "Hue Bridge V2 included",
+        "colors": "16 million colors",
+        "brightness": "800 lumens per bulb",
+        "connectivity": "Zigbee + Wi-Fi (via bridge)",
+        "compatibility": "Alexa, Google, HomeKit, Matter",
+        "lifespan": "25,000 hours",
+        "extras": "Hue Entertainment for TV sync"
+      },
+      "pros": [
+        "Industry gold standard for smart lighting",
+        "Rock-solid reliability and app quality",
+        "Massive ecosystem of accessories",
+        "Works with every platform including Matter"
+      ],
+      "cons": [
+        "Most expensive smart bulb option",
+        "Requires Hue Bridge (included in kit)",
+        "App redesign removed some features"
+      ]
+    },
+    {
+      "id": "ring-video-doorbell-4",
+      "name": "Ring Video Doorbell 4",
+      "brand": "Ring",
+      "category": "smart-doorbells",
+      "asin": "B09WZBPX7K",
+      "price": 219.99,
+      "rating": 4.4,
+      "reviewCount": 15600,
+      "image": "/images/products/ring-doorbell-4.jpg",
+      "specs": {
+        "resolution": "1536p HD+ (head-to-toe)",
+        "fieldOfView": "150° horizontal, full portrait",
+        "nightVision": "Color Pre-Roll + Night Vision",
+        "audio": "Two-way talk with noise cancellation",
+        "power": "Rechargeable battery or hardwired",
+        "connectivity": "Wi-Fi 6, dual-band",
+        "features": "Color Pre-Roll, Package Detection, 3D Motion",
+        "compatibility": "Alexa"
+      },
+      "pros": [
+        "Color Pre-Roll captures 4 seconds before motion",
+        "Head-to-toe 1536p video",
+        "Package detection alerts",
+        "Battery or hardwired flexibility"
+      ],
+      "cons": [
+        "Requires Ring Protect for most features",
+        "No Google Home or HomeKit support",
+        "Bulky design compared to competitors"
+      ]
+    },
+    {
+      "id": "google-nest-doorbell-wired-2nd-gen",
+      "name": "Google Nest Doorbell (Wired, 2nd Gen)",
+      "brand": "Google",
+      "category": "smart-doorbells",
+      "asin": "B0CWDMH2FQ",
+      "price": 179.99,
+      "rating": 4.3,
+      "reviewCount": 4800,
+      "image": "/images/products/google-nest-doorbell.jpg",
+      "specs": {
+        "resolution": "1600x1200 (2MP HDR)",
+        "fieldOfView": "145° diagonal",
+        "nightVision": "HDR night vision",
+        "audio": "Two-way audio",
+        "power": "Hardwired (8-24V AC)",
+        "connectivity": "Wi-Fi 6",
+        "features": "Familiar face detection, package detection, 24/7 recording",
+        "compatibility": "Google Home, Alexa (limited)"
+      },
+      "pros": [
+        "24/7 continuous recording with wired connection",
+        "Excellent AI-based person and package detection",
+        "Sleek, compact design",
+        "Free 3-hour event history"
+      ],
+      "cons": [
+        "Requires existing doorbell wiring",
+        "Full features need Nest Aware subscription",
+        "Limited smart home integrations vs Ring"
+      ]
+    },
+    {
+      "id": "samsung-smartthings-station",
+      "name": "Samsung SmartThings Station",
+      "brand": "Samsung",
+      "category": "smart-hubs",
+      "asin": "B0BWTWT8XF",
+      "price": 59.99,
+      "rating": 4.1,
+      "reviewCount": 2100,
+      "image": "/images/products/smartthings-station.jpg",
+      "specs": {
+        "protocols": "Matter, Thread, Zigbee, Z-Wave, Wi-Fi, Bluetooth",
+        "extras": "15W Qi2 wireless charger",
+        "compatibility": "SmartThings, Alexa, Google",
+        "features": "Energy monitoring, automations, routines",
+        "dimensions": "3.9\" diameter",
+        "power": "USB-C",
+        "button": "Smart button for routines",
+        "warranty": "1 year"
+      },
+      "pros": [
+        "Doubles as a wireless phone charger",
+        "Supports almost every smart home protocol",
+        "SmartThings platform is powerful",
+        "Affordable multi-protocol hub"
+      ],
+      "cons": [
+        "SmartThings app has a learning curve",
+        "No built-in speaker or display",
+        "Samsung ecosystem bias in setup"
+      ]
+    },
+    {
+      "id": "tp-link-kasa-smart-plug-ep25",
+      "name": "TP-Link Kasa Smart Plug (EP25)",
+      "brand": "TP-Link",
+      "category": "smart-plugs",
+      "asin": "B0BWRDX3KB",
+      "price": 12.99,
+      "rating": 4.6,
+      "reviewCount": 32000,
+      "image": "/images/products/kasa-smart-plug.jpg",
+      "specs": {
+        "type": "Mini plug (doesn't block second outlet)",
+        "connectivity": "Wi-Fi 2.4GHz",
+        "compatibility": "Alexa, Google, SmartThings",
+        "energyMonitoring": "Yes",
+        "maxLoad": "15A / 1800W",
+        "features": "Scheduling, timers, away mode",
+        "hubRequired": "No",
+        "dimensions": "2.6\" x 1.5\" x 1.5\""
+      },
+      "pros": [
+        "Ultra compact design doesn't block outlets",
+        "Built-in energy monitoring at this price",
+        "No hub required",
+        "Reliable Kasa app with great scheduling"
+      ],
+      "cons": [
+        "No Matter support yet",
+        "2.4GHz Wi-Fi only",
+        "No physical on/off button"
+      ]
+    },
+    {
+      "id": "roborock-q-revo-maxv",
+      "name": "Roborock Q Revo MaxV",
+      "brand": "Roborock",
+      "category": "robot-vacuums",
+      "asin": "B0CXJV1K3V",
+      "price": 799.99,
+      "rating": 4.5,
+      "reviewCount": 3400,
+      "image": "/images/products/roborock-q-revo.jpg",
+      "specs": {
+        "suction": "7000Pa HyperForce",
+        "navigation": "LiDAR + 3D structured light",
+        "mopping": "Dual spinning mops with hot water wash",
+        "dustbin": "Self-emptying (2.5L station bag)",
+        "battery": "5200mAh (up to 180 min)",
+        "noise": "67dB on balanced mode",
+        "features": "Auto mop lift, obstacle avoidance, multi-floor mapping",
+        "compatibility": "Alexa, Google, Siri Shortcuts"
+      },
+      "pros": [
+        "Vacuums and mops simultaneously",
+        "Self-emptying and self-washing dock",
+        "Excellent obstacle avoidance",
+        "Hot water mop washing kills bacteria"
+      ],
+      "cons": [
+        "Expensive at $800",
+        "Dock takes up significant floor space",
+        "Mop pads need replacement every 3-4 months"
+      ]
+    }
+  ]
+}

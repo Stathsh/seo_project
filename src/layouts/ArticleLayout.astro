@@ -1,0 +1,102 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import AffiliateDisclosure from '../components/AffiliateDisclosure.astro';
+import AuthorBox from '../components/AuthorBox.astro';
+import FAQ from '../components/FAQ.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    slug: string;
+    category: string;
+    type: string;
+    datePublished: string;
+    dateModified: string;
+    products?: Array<any>;
+    faq?: Array<{ question: string; answer: string }>;
+  };
+  headings: Array<{ depth: number; slug: string; text: string }>;
+}
+
+const { frontmatter, headings } = Astro.props;
+
+// Load categories for breadcrumb label
+import categoriesData from '../../data/categories.json';
+const category = categoriesData.categories.find(c => c.slug === frontmatter.category);
+const categoryName = category?.name || frontmatter.category;
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: categoryName, url: `/${frontmatter.category}/` },
+  { name: frontmatter.title, url: `/${frontmatter.slug}/` },
+];
+
+const showAffiliateDisclosure = frontmatter.type === 'best-for' || frontmatter.type === 'vs';
+---
+<BaseLayout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  slug={frontmatter.slug}
+  type={frontmatter.type}
+  datePublished={frontmatter.datePublished}
+  dateModified={frontmatter.dateModified}
+  category={frontmatter.category}
+  faq={frontmatter.faq}
+  products={frontmatter.products}
+  breadcrumbs={breadcrumbs}
+>
+  <article class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <div class="lg:grid lg:grid-cols-[1fr_260px] lg:gap-10 mt-6">
+      <!-- Main content -->
+      <div class="min-w-0">
+        <header class="mb-8">
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
+            {frontmatter.title}
+          </h1>
+          <div class="flex items-center gap-4 mt-4 text-sm text-gray-500">
+            <span>By <strong class="text-gray-700">Alex Chen</strong></span>
+            <span>&middot;</span>
+            <time datetime={frontmatter.dateModified}>
+              Updated {new Date(frontmatter.dateModified).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </time>
+          </div>
+        </header>
+
+        {showAffiliateDisclosure && <AffiliateDisclosure />}
+
+        <div class="prose prose-lg max-w-none
+          prose-headings:font-bold prose-headings:text-gray-900
+          prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
+          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+          prose-p:text-gray-700 prose-p:leading-relaxed
+          prose-a:text-brand-600 prose-a:font-medium hover:prose-a:text-brand-800
+          prose-strong:text-gray-900
+          prose-li:text-gray-700
+          prose-table:border-collapse prose-table:w-full
+          prose-th:bg-gray-50 prose-th:p-3 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-th:text-gray-700 prose-th:border prose-th:border-gray-200
+          prose-td:p-3 prose-td:border prose-td:border-gray-200 prose-td:text-sm
+        ">
+          <slot />
+        </div>
+
+        {frontmatter.faq && frontmatter.faq.length > 0 && (
+          <FAQ items={frontmatter.faq} />
+        )}
+
+        <AuthorBox />
+      </div>
+
+      <!-- Sidebar (sticky TOC) -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-24">
+          <TableOfContents headings={headings} />
+        </div>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,157 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  siteName: string;
+  siteUrl: string;
+  authorName?: string;
+  slug?: string;
+  type?: string;
+  datePublished?: string;
+  dateModified?: string;
+  category?: string;
+  image?: string;
+  faq?: Array<{ question: string; answer: string }>;
+  products?: Array<any>;
+  breadcrumbs?: Array<{ name: string; url: string }>;
+}
+
+const {
+  title,
+  description,
+  siteName,
+  siteUrl,
+  authorName = 'Alex Chen',
+  slug = '',
+  type = 'website',
+  datePublished,
+  dateModified,
+  category,
+  image,
+  faq,
+  products,
+  breadcrumbs,
+} = Astro.props;
+
+const canonicalUrl = slug ? `${siteUrl}/${slug}/` : siteUrl + '/';
+const ogImage = image || `${siteUrl}/og-default.jpg`;
+const pageTitle = slug ? `${title} | ${siteName}` : title;
+
+// Article schema
+const articleSchema = (type === 'best-for' || type === 'vs' || type === 'info') ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": description,
+  "image": ogImage,
+  "author": {
+    "@type": "Person",
+    "name": authorName,
+    "url": `${siteUrl}/about/`
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": siteName,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/favicon.svg`
+    }
+  },
+  "datePublished": datePublished,
+  "dateModified": dateModified || datePublished,
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalUrl
+  }
+}) : null;
+
+// FAQ schema
+const faqSchema = faq && faq.length > 0 ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faq.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+}) : null;
+
+// Breadcrumb schema
+const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": breadcrumbs.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": item.url.startsWith('http') ? item.url : `${siteUrl}${item.url}`
+  }))
+}) : null;
+
+// Product schema for best-for pages
+const productSchemas = (type === 'best-for' && products && products.length > 0)
+  ? products.map(p => JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": p.name,
+      "brand": {
+        "@type": "Brand",
+        "name": p.brand
+      },
+      "review": {
+        "@type": "Review",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": p.rating,
+          "bestRating": "5"
+        },
+        "author": {
+          "@type": "Person",
+          "name": authorName
+        }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": p.rating,
+        "reviewCount": p.reviewCount
+      },
+      ...(p.price ? {
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "USD",
+          "price": p.price,
+          "availability": "https://schema.org/InStock"
+        }
+      } : {})
+    }))
+  : [];
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- Open Graph -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:type" content={type === 'website' ? 'website' : 'article'} />
+<meta property="og:image" content={ogImage} />
+{datePublished && <meta property="article:published_time" content={datePublished} />}
+{dateModified && <meta property="article:modified_time" content={dateModified} />}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<!-- Structured Data -->
+{articleSchema && <script type="application/ld+json" set:html={articleSchema} />}
+{faqSchema && <script type="application/ld+json" set:html={faqSchema} />}
+{breadcrumbSchema && <script type="application/ld+json" set:html={breadcrumbSchema} />}
+{productSchemas.map(schema => <script type="application/ld+json" set:html={schema} />)}

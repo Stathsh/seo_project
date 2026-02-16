@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+import categoriesData from '../../../data/categories.json';
+
+export function getStaticPaths() {
+  return categoriesData.categories.map(cat => ({
+    params: { category: cat.slug },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+const allArticles = await getCollection('articles');
+
+const categoryArticles = allArticles
+  .filter(a => a.data.category === category.slug)
+  .sort((a, b) => new Date(b.data.dateModified).getTime() - new Date(a.data.dateModified).getTime());
+
+const bestForArticles = categoryArticles.filter(a => a.data.type === 'best-for');
+const vsArticles = categoryArticles.filter(a => a.data.type === 'vs');
+const infoArticles = categoryArticles.filter(a => a.data.type === 'info');
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: category.name, url: `/${category.slug}/` },
+];
+---
+
+<BaseLayout
+  title={`${category.name} — Reviews, Comparisons & Guides`}
+  description={category.description}
+  slug={category.slug}
+  category={category.slug}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <header class="mt-6 mb-10">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+        {category.name}
+      </h1>
+      <p class="mt-3 text-lg text-gray-600 max-w-2xl">{category.description}</p>
+    </header>
+
+    {bestForArticles.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+          Best Picks & Recommendations
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {bestForArticles.map(article => (
+            <ArticleCard
+              title={article.data.title}
+              description={article.data.description}
+              slug={article.data.slug}
+              category={article.data.category}
+              type={article.data.type}
+              dateModified={article.data.dateModified}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {vsArticles.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+          Head-to-Head Comparisons
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {vsArticles.map(article => (
+            <ArticleCard
+              title={article.data.title}
+              description={article.data.description}
+              slug={article.data.slug}
+              category={article.data.category}
+              type={article.data.type}
+              dateModified={article.data.dateModified}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {infoArticles.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+          Guides & How-Tos
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {infoArticles.map(article => (
+            <ArticleCard
+              title={article.data.title}
+              description={article.data.description}
+              slug={article.data.slug}
+              category={article.data.category}
+              type={article.data.type}
+              dateModified={article.data.dateModified}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {categoryArticles.length === 0 && (
+      <div class="text-center py-16 text-gray-500">
+        <p class="text-lg">No articles yet in this category. Check back soon!</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
