@@ -156,8 +156,15 @@ async function main() {
     maxTokens: 4000,
   });
 
-  // Parse the YAML result
+  // Parse the YAML result — handle cases where Claude adds preamble text
   let yamlContent = result.replace(/```ya?ml\n?/g, '').replace(/```\n?/g, '');
+
+  // Extract just the YAML array portion (starts with "- type:")
+  const yamlStart = yamlContent.indexOf('- type:');
+  if (yamlStart > 0) {
+    yamlContent = yamlContent.substring(yamlStart);
+  }
+
   let newKeywords;
   try {
     newKeywords = yaml.load(yamlContent);
@@ -170,7 +177,11 @@ async function main() {
   }
 
   if (!Array.isArray(newKeywords)) {
-    console.error('Generated content is not a YAML array.');
+    // Last resort: try to find any YAML array in the content
+    console.error('Generated content is not a YAML array. Saving raw output for review.');
+    const rawPath = path.join(site.dataDir, 'trend-research-raw.txt');
+    fs.writeFileSync(rawPath, result, 'utf-8');
+    console.error(`Raw output saved to: ${rawPath}`);
     process.exit(1);
   }
 
