@@ -24,10 +24,3 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# SPA-style redirects not needed — Astro generates full static HTML
-# But ensure trailing slashes work correctly
-[[redirects]]
-  from = "/:slug"
-  to = "/:slug/"
-  status = 301
-  force = false
