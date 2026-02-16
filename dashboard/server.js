@@ -17,6 +17,7 @@ import keywordsRoutes from './routes/keywords.js';
 import productsRoutes from './routes/products.js';
 import sitesRoutes from './routes/sites.js';
 import buildRoutes from './routes/build.js';
+import templatesRoutes from './routes/templates.js';
 
 const app = express();
 const PORT = process.env.DASHBOARD_PORT || 3456;
@@ -37,6 +38,7 @@ app.use(keywordsRoutes);
 app.use(productsRoutes);
 app.use(sitesRoutes);
 app.use(buildRoutes);
+app.use(templatesRoutes);
 
 // Start server
 app.listen(PORT, () => {

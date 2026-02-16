@@ -9,6 +9,7 @@ export function layout(title, content, { activePage = '', siteName = '', sites =
     { label: 'Keywords', href: '/keywords', id: 'keywords' },
     { label: 'Products', href: '/products', id: 'products' },
     { label: 'Sites', href: '/sites', id: 'sites' },
+    { label: 'Templates', href: '/templates', id: 'templates' },
     { label: 'Build', href: '/build', id: 'build' },
   ];
 
