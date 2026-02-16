@@ -82,7 +82,7 @@ export function resolveSite(options = {}) {
 function loadLegacyConfig() {
   return {
     id: '_legacy',
-    name: process.env.SITE_NAME || 'SmartHomePicks',
+    name: process.env.SITE_NAME || 'SmartHomeRanked',
     url: process.env.SITE_URL || 'https://yourdomain.com',
     author: {
       name: 'Alex Chen',

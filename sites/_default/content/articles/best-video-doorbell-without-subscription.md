@@ -6,7 +6,7 @@ type: best-for
 category: video-doorbells
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: SmartHomePicks
+author: SmartHomeRanked
 products:
   - id: google-nest-doorbell-wired-2nd-gen
     brand: Google

@@ -1,12 +1,12 @@
 {
   "id": "smart-home",
-  "name": "SmartHomePicks",
-  "url": "https://smarthomepicks.com",
+  "name": "SmartHomeRanked",
+  "url": "https://smarthomeranked.com",
   "author": {
-    "name": "Alex Chen",
+    "name": "Alex Stathopoulos",
     "title": "Smart Home Editor",
     "bio": "Alex has been testing and reviewing smart home devices for over 5 years. He's personally installed 50+ security cameras, tested every major smart speaker, and automated his entire home. When he's not geeking out over the latest Matter-compatible gadget, he's probably adjusting his smart thermostat schedule for the tenth time this week.",
-    "initials": "AC"
+    "initials": "AS"
   },
   "affiliateTag": "smarthomepi0f-22",
   "branding": {

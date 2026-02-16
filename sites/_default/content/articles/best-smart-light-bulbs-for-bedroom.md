@@ -6,7 +6,7 @@ type: best-for
 category: "smart-lighting"
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: "SmartHomePicks Editorial Team"
+author: "SmartHomeRanked Editorial Team"
 relatedSlugs:
   - best-smart-lighting-starter-kit
   - do-smart-light-bulbs-use-electricity-when-off

@@ -6,7 +6,7 @@ type: best-for
 category: "robot-vacuums"
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: "SmartHomePicks Editorial Team"
+author: "SmartHomeRanked Editorial Team"
 relatedSlugs:
   - are-robot-vacuums-worth-it
   - how-do-robot-vacuums-work

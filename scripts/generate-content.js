@@ -23,7 +23,7 @@ const site = resolveSite();
 const KEYWORDS_FILE = path.join(site.dataDir, 'keywords.yaml');
 const PRODUCTS_FILE = path.join(site.dataDir, 'products.json');
 const ARTICLES_DIR = site.contentDir;
-const SITE_NAME = site.config.name || process.env.SITE_NAME || 'SmartHomePicks';
+const SITE_NAME = site.config.name || process.env.SITE_NAME || 'SmartHomeRanked';
 
 // ─── Load data ───────────────────────────────────────────────────
 

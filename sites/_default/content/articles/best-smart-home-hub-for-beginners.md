@@ -6,7 +6,7 @@ type: best-for
 category: "smart-hubs"
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: "SmartHomePicks Editorial Team"
+author: "SmartHomeRanked Editorial Team"
 relatedSlugs:
   - how-to-choose-a-smart-home-hub
   - what-is-matter-smart-home

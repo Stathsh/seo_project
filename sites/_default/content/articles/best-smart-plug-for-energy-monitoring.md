@@ -6,7 +6,7 @@ type: best-for
 category: "smart-plugs"
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: "SmartHomePicks Editorial Team"
+author: "SmartHomeRanked Editorial Team"
 relatedSlugs:
   - are-smart-plugs-safe-to-leave-on-all-the-time
   - how-to-set-up-smart-home-on-a-budget

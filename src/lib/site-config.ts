@@ -59,7 +59,7 @@ export function getSiteConfig(): SiteConfig {
   // Legacy fallback
   _cachedConfig = {
     id: '_legacy',
-    name: import.meta.env?.SITE_NAME || process.env.SITE_NAME || 'SmartHomePicks',
+    name: import.meta.env?.SITE_NAME || process.env.SITE_NAME || 'SmartHomeRanked',
     url: import.meta.env?.SITE_URL || process.env.SITE_URL || 'https://yourdomain.com',
     author: {
       name: 'Alex Chen',

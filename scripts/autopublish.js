@@ -74,7 +74,7 @@ function getProductById(products, id) {
 }
 
 function getSystemPrompt(type) {
-  const siteName = site.config.name || process.env.SITE_NAME || 'SmartHomePicks';
+  const siteName = site.config.name || process.env.SITE_NAME || 'SmartHomeRanked';
   const base = `You are an expert smart home product reviewer writing for ${siteName}, a trusted smart home review site. Your writing style is:
 
 - Conversational and authoritative — like a knowledgeable friend who's tested everything

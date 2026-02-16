@@ -6,7 +6,7 @@ type: best-for
 category: smart-thermostats
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: SmartHomePicks
+author: SmartHomeRanked
 products:
   - id: ecobee-smart-thermostat-premium
     brand: ecobee

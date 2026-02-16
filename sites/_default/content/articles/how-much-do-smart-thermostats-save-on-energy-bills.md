@@ -6,7 +6,7 @@ type: info
 category: smart-thermostats
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: SmartHomePicks
+author: SmartHomeRanked
 relatedSlugs:
   - best-smart-thermostat-for-energy-savings
   - best-smart-thermostat-for-heat-pump

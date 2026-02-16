@@ -6,7 +6,7 @@ type: best-for
 category: smart-speakers
 datePublished: "2026-02-17"
 dateModified: "2026-02-17"
-author: SmartHomePicks
+author: SmartHomeRanked
 products:
   - id: amazon-echo-dot-5th-gen
     brand: Amazon
