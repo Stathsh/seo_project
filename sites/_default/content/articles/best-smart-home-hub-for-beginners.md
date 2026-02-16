@@ -19,7 +19,7 @@ products:
     rating: 4.1
     reviewCount: 2100
     asin: "B0BWTWT8XF"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     badge: "Our Top Pick"
     specs:
       protocols: "Matter, Thread, Zigbee, Z-Wave, Wi-Fi, Bluetooth"
@@ -42,7 +42,7 @@ products:
     rating: 4.6
     reviewCount: 45000
     asin: "B09B8V1LZ3"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     badge: "Easiest to Use"
     specs:
       smartHome: "Zigbee hub + Matter + Thread"

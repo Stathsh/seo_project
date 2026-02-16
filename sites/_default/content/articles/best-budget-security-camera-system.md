@@ -14,7 +14,7 @@ products:
     rating: 4.3
     reviewCount: 28900
     asin: "B09XK22VPQ"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1080p HD"
       fieldOfView: "130° diagonal"
@@ -39,7 +39,7 @@ products:
     rating: 4.2
     reviewCount: 8750
     asin: "B0BWX32MFM"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1080p HD"
       fieldOfView: "143° diagonal"
@@ -63,7 +63,7 @@ products:
     rating: 4.5
     reviewCount: 12450
     asin: "B0B6GKJP3D"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1080p HD"
       fieldOfView: "140° diagonal"

@@ -16,7 +16,7 @@ products:
     reviewCount: 18000
     badge: "Best Sound"
     asin: B09JCMX8K8
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       speaker: "Full-range driver + dual passive radiators"
       voiceAssistant: "Siri"
@@ -40,7 +40,7 @@ products:
     reviewCount: 45000
     badge: "Best Value"
     asin: B09B8V1LZ3
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       speaker: "1.73\" full-range driver"
       voiceAssistant: "Alexa"

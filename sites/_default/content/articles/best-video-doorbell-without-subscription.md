@@ -16,7 +16,7 @@ products:
     reviewCount: 4800
     badge: "Best Free Tier"
     asin: B0CWDMH2FQ
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       resolution: "1600x1200 HDR"
       fieldOfView: "145° diagonal"
@@ -41,7 +41,7 @@ products:
     rating: 4.4
     reviewCount: 15600
     asin: B09WZBPX7K
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       resolution: "1080p HD"
       fieldOfView: "160° horizontal"

@@ -14,7 +14,7 @@ products:
     rating: 4.4
     reviewCount: 15600
     asin: "B09WZBPX7K"
-    affiliateTag: "YOURTAG-20"
+    affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1536p HD+ (head-to-toe)"
       fieldOfView: "150° horizontal"
@@ -37,7 +37,7 @@ products:
     rating: 4.3
     reviewCount: 4800
     asin: "B0CWDMH2FQ"
-    affiliateTag: "YOURTAG-20"
+    affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1600x1200 (2MP HDR)"
       fieldOfView: "145° diagonal"

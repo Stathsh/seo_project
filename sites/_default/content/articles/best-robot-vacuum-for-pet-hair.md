@@ -19,7 +19,7 @@ products:
     rating: 4.5
     reviewCount: 3400
     asin: "B0CXJV1K3V"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     badge: "Our Top Pick"
     specs:
       suction: "7000Pa HyperForce"

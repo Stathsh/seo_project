@@ -16,7 +16,7 @@ products:
     reviewCount: 5400
     badge: "Our Top Pick"
     asin: B09XXTQPXC
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       display: "3.5\" full-color touchscreen"
       sensors: "Built-in air quality + occupancy"
@@ -41,7 +41,7 @@ products:
     rating: 4.4
     reviewCount: 3200
     asin: B0CWDH86MK
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       display: "2.7\" borderless LCD"
       sensors: "Temperature, humidity, occupancy"

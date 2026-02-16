@@ -14,7 +14,7 @@ products:
     rating: 4.6
     reviewCount: 45000
     asin: "B09B8V1LZ3"
-    affiliateTag: "YOURTAG-20"
+    affiliateTag: "smarthomepi0f-22"
     specs:
       speaker: "1.73\" full-range driver"
       voiceAssistant: "Alexa"
@@ -37,7 +37,7 @@ products:
     rating: 4.6
     reviewCount: 18000
     asin: "B09JCMX8K8"
-    affiliateTag: "YOURTAG-20"
+    affiliateTag: "smarthomepi0f-22"
     specs:
       speaker: "Full-range driver + dual passive radiators"
       voiceAssistant: "Siri"

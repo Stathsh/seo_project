@@ -18,7 +18,7 @@ products:
     rating: 4.7
     reviewCount: 22000
     asin: "B096YFWVVS"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     badge: "Our Top Pick"
     specs:
       bulbs: "3x A19 color bulbs (75W equivalent)"

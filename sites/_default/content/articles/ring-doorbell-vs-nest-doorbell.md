@@ -17,7 +17,7 @@ products:
     rating: 4.4
     reviewCount: 15600
     asin: B09WZBPX7K
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       resolution: "1536p HD+"
       fieldOfView: "150° horizontal"
@@ -43,7 +43,7 @@ products:
     rating: 4.3
     reviewCount: 4800
     asin: B0CWDMH2FQ
-    affiliateTag: smarthome-20
+    affiliateTag: smarthomepi0f-22
     specs:
       resolution: "1600x1200 HDR"
       fieldOfView: "145° diagonal"

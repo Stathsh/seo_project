@@ -18,7 +18,7 @@ products:
     rating: 4.6
     reviewCount: 32000
     asin: "B0BWRDX3KB"
-    affiliateTag: "smarthome-20"
+    affiliateTag: "smarthomepi0f-22"
     badge: "Our Top Pick"
     specs:
       type: "Mini plug (doesn't block second outlet)"
