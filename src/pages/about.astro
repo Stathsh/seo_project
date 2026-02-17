@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSiteConfig } from '../lib/site-config';
+import { getTheme } from '../lib/theme';
+
+const config = getSiteConfig();
+const siteName = config.name;
+const theme = getTheme();
+const layoutStyle = theme.layout.style;
+const isTechRadar = layoutStyle === 'techradar';
+const isEditorial = layoutStyle === 'editorial';
+---
+
+<BaseLayout
+  title={`About Our Research Process | ${siteName}`}
+  description={`Learn how ${siteName} uses AI-assisted research to analyze thousands of product reviews, specs, and performance data to deliver smart home recommendations you can trust.`}
+  slug="about"
+  type="website"
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+
+    {isTechRadar ? (
+      <div class="mb-10">
+        <div class="h-1 w-16 bg-brand-600 mb-4"></div>
+        <h1 class="text-3xl sm:text-4xl font-bold font-heading text-gray-900">About {siteName}</h1>
+        <p class="mt-3 text-lg text-gray-600">How we research and recommend smart home products</p>
+      </div>
+    ) : isEditorial ? (
+      <div class="mb-10">
+        <h1 class="text-3xl sm:text-4xl font-black font-heading text-gray-900">About {siteName}</h1>
+        <p class="mt-3 text-lg text-gray-500 italic">How we research and recommend smart home products</p>
+      </div>
+    ) : (
+      <div class="mb-10">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">About {siteName}</h1>
+        <p class="mt-3 text-lg text-gray-600">How we research and recommend smart home products</p>
+      </div>
+    )}
+
+    <div class="prose prose-gray max-w-none">
+
+      <h2>What We Do</h2>
+      <p>
+        {siteName} is a smart home product research site. We help you find the right devices for your home by analyzing real-world data — product specifications, customer reviews, pricing trends, and performance benchmarks — so you can make informed decisions without spending hours doing research yourself.
+      </p>
+      <p>
+        We cover security cameras, smart thermostats, smart speakers, video doorbells, smart lighting, plugs, robot vacuums, and smart home hubs. For each category, we publish buying guides, head-to-head product comparisons, and informational articles that explain the technology behind these devices.
+      </p>
+
+      <h2>Our Research Methodology</h2>
+      <p>
+        Our content is produced using <strong>AI-assisted research tools</strong> that analyze thousands of product reviews, technical specifications, and real-world performance data. Here's how our process works:
+      </p>
+      <ol>
+        <li><strong>Data collection</strong> — We gather product specs, pricing, customer reviews, and expert assessments from multiple sources for every product we cover.</li>
+        <li><strong>AI-powered analysis</strong> — Our research tools process this data to identify patterns, compare products objectively, and surface the details that matter most to buyers.</li>
+        <li><strong>Structured recommendations</strong> — We organize findings into clear, actionable recommendations with specific use cases — not just "best overall" but "best for apartments," "best for outdoor use," or "best budget option."</li>
+        <li><strong>Ongoing updates</strong> — As new products launch and prices change, we update our content to keep recommendations current.</li>
+      </ol>
+
+      <h2>Why AI-Assisted Research?</h2>
+      <p>
+        A single smart home product can have thousands of customer reviews across multiple retailers. No human reviewer can read them all. Our AI-assisted approach lets us process far more data than traditional editorial teams, identifying consensus opinions, common complaints, and standout features that might otherwise be missed.
+      </p>
+      <p>
+        We believe in being transparent about this. Rather than pretending to have a team of reviewers who've personally tested every device, we're upfront: our strength is data analysis at scale, combined with clearly structured product information that helps you make better decisions.
+      </p>
+
+      <h2>What Makes Us Different</h2>
+      <ul>
+        <li><strong>Data-driven, not opinion-driven</strong> — Our recommendations are based on aggregated data from real users and verified specifications, not a single reviewer's subjective experience.</li>
+        <li><strong>Transparent methodology</strong> — We tell you exactly how we arrive at our recommendations. No hidden scoring systems or undisclosed criteria.</li>
+        <li><strong>No corporate sponsorship influence</strong> — Our research and recommendations are independent. Product rankings are determined by data, not by which brand pays the most.</li>
+        <li><strong>Specific use-case matching</strong> — Instead of generic "top 10" lists, we match products to specific needs and scenarios so you find what actually works for your situation.</li>
+      </ul>
+
+      <h2>Affiliate Disclosure</h2>
+      <p>
+        {siteName} is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program. When you click a product link and make a purchase, we may earn a commission at no additional cost to you. This helps support the site and allows us to continue producing research content.
+      </p>
+      <p>
+        Affiliate relationships do not influence our product rankings or recommendations. Products are evaluated on their merits based on the data we analyze.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Have questions about our research or want to suggest a product category for us to cover? We'd love to hear from you. Reach out through our <a href="/contact/">contact page</a>.
+      </p>
+
+    </div>
+  </div>
+</BaseLayout>

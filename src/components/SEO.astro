@@ -21,7 +21,7 @@ const {
   description,
   siteName,
   siteUrl,
-  authorName = 'Alex Chen',
+  authorName = 'SmartHomeRanked Research',
   slug = '',
   type = 'website',
   datePublished,
@@ -45,7 +45,7 @@ const articleSchema = (type === 'best-for' || type === 'vs' || type === 'info') 
   "description": description,
   "image": ogImage,
   "author": {
-    "@type": "Person",
+    "@type": "Organization",
     "name": authorName,
     "url": `${siteUrl}/about/`
   },
@@ -109,7 +109,7 @@ const productSchemas = (type === 'best-for' && products && products.length > 0)
           "bestRating": "5"
         },
         "author": {
-          "@type": "Person",
+          "@type": "Organization",
           "name": authorName
         }
       },

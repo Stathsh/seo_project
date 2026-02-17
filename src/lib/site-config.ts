@@ -62,16 +62,16 @@ export function getSiteConfig(): SiteConfig {
     name: import.meta.env?.SITE_NAME || process.env.SITE_NAME || 'SmartHomeRanked',
     url: import.meta.env?.SITE_URL || process.env.SITE_URL || 'https://yourdomain.com',
     author: {
-      name: 'Alex Chen',
-      title: 'Smart Home Editor',
-      bio: "Alex has been testing and reviewing smart home devices for over 5 years. He's personally installed 50+ security cameras, tested every major smart speaker, and automated his entire home. When he's not geeking out over the latest Matter-compatible gadget, he's probably adjusting his smart thermostat schedule for the tenth time this week.",
-      initials: 'AC',
+      name: 'SmartHomeRanked Research',
+      title: 'AI-Assisted Product Analysis',
+      bio: 'We combine AI-powered data analysis with real customer reviews, product specs, and hands-on testing data to deliver smart home recommendations you can trust. Our research methodology processes thousands of data points for every product we cover.',
+      initials: 'SR',
     },
     affiliateTag: import.meta.env?.AMAZON_AFFILIATE_TAG || process.env.AMAZON_AFFILIATE_TAG || 'YOURTAG-20',
     branding: {
       heroTitle: 'Smart home advice you can <span class="text-brand-600">actually trust</span>',
-      heroDescription: "We test and compare smart home devices so you don't waste money on the wrong one. No corporate fluff — just honest opinions from someone who's installed it all.",
-      footerDescription: 'Expert smart home reviews and comparisons to help you build a smarter, more connected home.',
+      heroDescription: "AI-powered research meets real-world data. We analyze thousands of reviews, specs, and performance benchmarks so you don't waste money on the wrong device.",
+      footerDescription: 'Data-driven smart home research and recommendations. AI-assisted analysis of real customer reviews, specs, and performance data.',
     },
     navigation: [
       { label: 'Security Cameras', href: '/security-cameras/' },

@@ -13,8 +13,10 @@ const isEditorial = layoutStyle === 'editorial';
 {isTechRadar ? (
   <div class="mt-12 pt-8 border-t-2 border-brand-600">
     <div class="flex items-start gap-4">
-      <div class="w-14 h-14 rounded-full bg-brand-600 flex items-center justify-center flex-shrink-0">
-        <span class="text-xl font-bold text-white">{author.initials}</span>
+      <div class="w-14 h-14 rounded bg-brand-600 flex items-center justify-center flex-shrink-0">
+        <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
       </div>
       <div>
         <p class="font-bold text-gray-900 font-heading uppercase text-sm tracking-wide">{author.name}</p>
@@ -22,14 +24,17 @@ const isEditorial = layoutStyle === 'editorial';
         <p class="text-sm text-gray-600 mt-2 leading-relaxed">
           {author.bio}
         </p>
+        <a href="/about/" class="text-xs text-brand-600 font-semibold uppercase tracking-wider mt-2 inline-block hover:text-brand-800 transition-colors">Learn about our methodology &rarr;</a>
       </div>
     </div>
   </div>
 ) : isEditorial ? (
   <div class="mt-12 pt-8 border-t border-gray-300">
     <div class="flex items-start gap-4">
-      <div class="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-        <span class="text-xl font-bold text-gray-700">{author.initials}</span>
+      <div class="w-14 h-14 rounded bg-gray-200 flex items-center justify-center flex-shrink-0">
+        <svg class="w-7 h-7 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
       </div>
       <div>
         <p class="font-bold text-gray-900 text-lg">{author.name}</p>
@@ -37,14 +42,17 @@ const isEditorial = layoutStyle === 'editorial';
         <p class="text-sm text-gray-600 mt-2 leading-relaxed">
           {author.bio}
         </p>
+        <a href="/about/" class="text-sm text-gray-700 font-medium mt-2 inline-block hover:text-gray-900 transition-colors">About our research process &rarr;</a>
       </div>
     </div>
   </div>
 ) : (
   <div class="mt-12 p-6 bg-gray-50 rounded-xl border border-gray-200">
     <div class="flex items-start gap-4">
-      <div class="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
-        <span class="text-2xl font-bold text-brand-700">{author.initials}</span>
+      <div class="w-14 h-14 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+        <svg class="w-7 h-7 text-brand-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
       </div>
       <div>
         <p class="font-bold text-gray-900">{author.name}</p>
@@ -52,6 +60,7 @@ const isEditorial = layoutStyle === 'editorial';
         <p class="text-sm text-gray-600 mt-2 leading-relaxed">
           {author.bio}
         </p>
+        <a href="/about/" class="text-sm text-brand-600 font-medium mt-2 inline-block hover:text-brand-800 transition-colors">About our research process &rarr;</a>
       </div>
     </div>
   </div>

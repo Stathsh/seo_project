@@ -22,8 +22,8 @@ export function templatePreviewPage(template) {
   const navItems = ['Security Cameras', 'Thermostats', 'Smart Speakers', 'Doorbells', 'Lighting'];
   const articleTitle = 'Best Smart Thermostats of 2025: Top 7 Picks Tested &amp; Compared';
   const articleDate = 'February 15, 2025';
-  const authorName = 'Alex Stathopoulos';
-  const authorInitials = 'AS';
+  const authorName = 'SmartHomeRanked Research';
+  const authorInitials = 'SR';
 
   const tocItems = [
     { id: 'top-picks', text: 'Our Top Picks', depth: 2 },
