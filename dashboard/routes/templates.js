@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { spawn } from 'child_process';
 import { getActiveSite, getAllSites } from '../lib/site-manager.js';
 import { getAllTemplates, getTemplateById, getActiveTemplateId } from '../lib/templates.js';
+import { ROOT } from '../lib/site-manager.js';
 import { layout } from '../views/layout.js';
 import { templatesPage } from '../views/templates.js';
 import { templatePreviewPage } from '../views/template-preview.js';
@@ -53,7 +55,25 @@ router.post('/templates/apply/:id', (req, res) => {
   const themePath = path.join(site.dataDir, '..', 'theme.json');
   fs.writeFileSync(themePath, JSON.stringify(themeData, null, 2) + '\n');
 
-  res.redirect('/templates?msg=' + encodeURIComponent(`Template "${template.name}" applied! Go to Build to rebuild your site.`));
+  // Git commit and push to trigger Netlify deploy
+  const gitCmd = `git add "${themePath}" && git commit -m "Apply template: ${template.name}" && git push`;
+  const child = spawn('sh', ['-c', gitCmd], { cwd: ROOT });
+
+  let output = '';
+  child.stdout.on('data', (data) => { output += data.toString(); });
+  child.stderr.on('data', (data) => { output += data.toString(); });
+
+  child.on('close', (code) => {
+    if (code === 0) {
+      res.redirect('/templates?msg=' + encodeURIComponent(`Template "${template.name}" applied and deployed! Netlify will rebuild shortly.`));
+    } else {
+      res.redirect('/templates?msg=' + encodeURIComponent(`Template applied but git push failed: ${output.slice(0, 200)}`));
+    }
+  });
+
+  child.on('error', (err) => {
+    res.redirect('/templates?msg=' + encodeURIComponent(`Template applied but deploy failed: ${err.message}`));
+  });
 });
 
 export default router;
