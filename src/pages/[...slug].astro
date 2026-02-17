@@ -8,6 +8,7 @@ import FAQ from '../components/FAQ.astro';
 import ProductCard from '../components/ProductCard.astro';
 import ComparisonTable from '../components/ComparisonTable.astro';
 import ArticleCard from '../components/ArticleCard.astro';
+import MostPopular from '../components/MostPopular.astro';
 import categoriesData from '../../data/categories.json';
 import { getSiteConfig } from '../lib/site-config';
 import { getTheme } from '../lib/theme';
@@ -56,6 +57,17 @@ const relatedArticles = allArticles
   .slice(0, 4);
 
 const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
+
+// Pick popular articles for sidebar (different from current, prefer variety of categories)
+const popularArticles = allArticles
+  .filter(a => a.data.slug !== data.slug)
+  .sort((a, b) => {
+    // Prefer best-for and vs types as they tend to be "popular"
+    const typeWeight = (t: string) => t === 'best-for' ? 2 : t === 'vs' ? 1 : 0;
+    return typeWeight(b.data.type) - typeWeight(a.data.type);
+  })
+  .slice(0, 4)
+  .map(a => ({ title: a.data.title, slug: a.data.slug }));
 ---
 
 <BaseLayout
@@ -90,9 +102,14 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
                 <span class="font-semibold text-gray-800">{config.author.name}</span>
               </div>
               <span class="text-gray-300">|</span>
+              <span class="text-gray-500">{config.author.title}</span>
+              <span class="text-gray-300">|</span>
               <time datetime={data.dateModified}>
                 Updated {new Date(data.dateModified).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
               </time>
+            </div>
+            <div class="mt-5 p-3 border border-gray-200 bg-gray-50 text-sm text-gray-600">
+              <strong class="text-gray-700">Disclosure:</strong> Our editors independently research, test, and recommend the best products. We may receive commissions on purchases made from our chosen links.
             </div>
           </header>
         ) : isEditorial ? (
@@ -137,7 +154,7 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
         <div class:list={[
           'prose prose-lg max-w-none',
           'prose-headings:font-bold prose-headings:text-gray-900',
-          'prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4',
+          'prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b-2 prose-h2:border-brand-600 prose-h2:pb-2',
           'prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3',
           'prose-p:text-gray-700 prose-p:leading-relaxed',
           'prose-a:text-brand-600 prose-a:font-medium hover:prose-a:text-brand-800',
@@ -172,7 +189,8 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
                 specs={product.specs || {}}
                 asin={product.asin || 'B000000000'}
                 affiliateTag={product.affiliateTag}
-                badge={product.badge || (i === 0 ? 'Our Top Pick' : undefined)}
+                badge={i === 0 ? "Editor's Choice" : (product.badge || undefined)}
+                highlight={i === 0}
               />
             ))}
           </div>
@@ -211,14 +229,15 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
         <AuthorBox />
       </div>
 
-      <!-- Sidebar (sticky TOC) -->
-      {tocHeadings.length > 0 && (
-        <aside class="hidden lg:block">
-          <div class="sticky top-24">
+      <!-- Sidebar -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-24">
+          {tocHeadings.length > 0 && (
             <TableOfContents headings={headings} />
-          </div>
-        </aside>
-      )}
+          )}
+          <MostPopular articles={popularArticles} />
+        </div>
+      </aside>
     </div>
   </article>
 </BaseLayout>
