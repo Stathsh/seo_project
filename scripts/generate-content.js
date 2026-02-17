@@ -22,8 +22,22 @@ dotenv.config();
 const site = resolveSite();
 const KEYWORDS_FILE = path.join(site.dataDir, 'keywords.yaml');
 const PRODUCTS_FILE = path.join(site.dataDir, 'products.json');
+const ENGINE_FILE = path.join(site.dataDir, 'content-engine.json');
 const ARTICLES_DIR = site.contentDir;
 const SITE_NAME = site.config.name || process.env.SITE_NAME || 'SmartHomeRanked';
+
+// ─── Load content engine config ─────────────────────────────
+
+function loadEngineConfig() {
+  if (fs.existsSync(ENGINE_FILE)) {
+    try {
+      return JSON.parse(fs.readFileSync(ENGINE_FILE, 'utf-8'));
+    } catch { /* fall through */ }
+  }
+  return {};
+}
+
+const engineConfig = loadEngineConfig();
 
 // ─── Load data ───────────────────────────────────────────────────
 
@@ -44,7 +58,8 @@ function getProductById(products, id) {
 // ─── System prompts by page type ─────────────────────────────────
 
 function getSystemPrompt(type) {
-  const base = `You are an expert smart home product reviewer writing for ${SITE_NAME}, a trusted smart home review site. Your writing style is:
+  const prompts = engineConfig.prompts || {};
+  const base = (prompts.base || `You are an expert smart home product reviewer writing for {{SITE_NAME}}, a trusted smart home review site. Your writing style is:
 
 - Conversational and authoritative — like a knowledgeable friend who's tested everything
 - Opinionated with specific recommendations — never wishy-washy "it depends" conclusions
@@ -58,53 +73,47 @@ IMPORTANT FORMATTING RULES:
 - Write in markdown. Do not include frontmatter — that's handled separately.
 - Do NOT include an FAQ section — that's generated separately.
 - Do NOT wrap the entire output in a markdown code block.
-- Aim for genuinely helpful content that would make a real person bookmark the page.`;
+- Aim for genuinely helpful content that would make a real person bookmark the page.`).replace(/\{\{SITE_NAME\}\}/g, SITE_NAME);
 
-  const typeInstructions = {
-    'best-for': `${base}
+  const typePrompt = prompts[type];
+  if (typePrompt) {
+    return `${base}\n\n${typePrompt}`;
+  }
 
-You are writing a "Best [Product] for [Use Case]" article. Structure:
+  // Fallback hardcoded type instructions
+  const fallbackInstructions = {
+    'best-for': `You are writing a "Best [Product] for [Use Case]" article. Structure:
 
-1. **Opening paragraph (2-3 sentences):** Immediately state your #1 pick and why. Include the primary keyword naturally. This paragraph should be featured-snippet-worthy — direct and useful.
-2. **"What to Look For" section (## heading):** 3-4 key factors buyers should consider for this specific use case. Be specific, not generic.
-3. **Individual product reviews (## heading for each product):** For each product, write 150-250 words covering:
-   - Why it's good for this specific use case
-   - 2-3 standout features with specific specs
-   - Who it's best for (and who should skip it)
-   - Any notable limitations
-4. **"How We Tested" section (## heading):** Brief credibility-building paragraph about testing methodology.
-5. **"Bottom Line" section (## heading):** Restate your top pick and runner-up in 2-3 sentences.
+1. **Opening paragraph (2-3 sentences):** Immediately state your #1 pick and why. Include the primary keyword naturally.
+2. **"What to Look For" section (## heading):** 3-4 key factors for this use case.
+3. **Individual product reviews (## heading for each):** 150-250 words each.
+4. **"How We Tested" section (## heading):** Brief credibility paragraph.
+5. **"Bottom Line" section (## heading):** Restate top pick and runner-up.
 
 Content length: 1500-2500 words total.`,
 
-    vs: `${base}
+    vs: `You are writing a "[Product A] vs [Product B]" comparison article. Structure:
 
-You are writing a "[Product A] vs [Product B]" comparison article. Structure:
+1. **Opening paragraph:** State the clear winner upfront.
+2. **"The Quick Verdict" section:** 3-4 sentence summary.
+3. **Category-by-category comparison (## headings):** 5-6 categories, 100-150 words each.
+4. **"Who Should Buy [Product A]" section:** Bullet points.
+5. **"Who Should Buy [Product B]" section:** Bullet points.
+6. **"Final Verdict" section:** Definitive winner.
 
-1. **Opening paragraph (2-3 sentences):** State the clear winner upfront. Don't make readers scroll — tell them who wins and why in the first paragraph.
-2. **"The Quick Verdict" section (## heading):** 3-4 sentence summary of who should buy which product.
-3. **Category-by-category comparison (## headings):** Compare in 5-6 categories relevant to these products (e.g., Video Quality, Smart Home Integration, Value for Money, etc.). Each category:
-   - 100-150 words of direct comparison
-   - End with a clear "Winner: [Product]" declaration
-4. **"Who Should Buy [Product A]" section (## heading):** Bullet points of ideal buyer profiles
-5. **"Who Should Buy [Product B]" section (## heading):** Bullet points of ideal buyer profiles
-6. **"Final Verdict" section (## heading):** Definitive winner with nuance about edge cases.
+Content length: 1500-2000 words total.`,
 
-Content length: 1500-2000 words total. The winner must be CLEAR — this is not a "both are great" article.`,
+    info: `You are writing an informational/how-to article. Structure:
 
-    info: `${base}
-
-You are writing an informational/how-to article that builds topical authority. Structure:
-
-1. **Opening paragraph (2-3 sentences):** Directly answer the question in the first paragraph. This should be featured-snippet-optimized — imagine Google pulling this exact text.
-2. **Detailed explanation (## headings):** Break the topic into 3-5 logical sections with ## headings. Each section should be 150-250 words.
-3. **Practical tips or steps (## heading):** Actionable advice readers can use immediately.
-4. **"What We Recommend" section (## heading):** Tie it back to 1-2 specific product recommendations with brief explanations of why they're relevant to this topic.
+1. **Opening paragraph:** Directly answer the question.
+2. **Detailed explanation (## headings):** 3-5 sections, 150-250 words each.
+3. **Practical tips or steps (## heading):** Actionable advice.
+4. **"What We Recommend" section:** 1-2 product recommendations.
 
 Content length: 1000-1500 words total.`,
   };
 
-  return typeInstructions[type] || base;
+  return fallbackInstructions[type] ? `${base}\n\n${fallbackInstructions[type]}` : base;
 }
 
 // ─── Build user prompts ──────────────────────────────────────────
@@ -155,6 +164,10 @@ Remember: Answer the question directly in the first paragraph. Write for someone
 // ─── FAQ Generation ──────────────────────────────────────────────
 
 function buildFaqPrompt(entry) {
+  const prompts = engineConfig.prompts || {};
+  if (prompts.faq) {
+    return prompts.faq.replace(/\{\{KEYWORD\}\}/g, entry.keyword);
+  }
   return `Generate 5 FAQ questions and answers for an article about "${entry.keyword}" in the smart home niche.
 
 Requirements:
@@ -342,11 +355,15 @@ async function main() {
       // Step 1: Generate main content
       const system = getSystemPrompt(entry.type);
       const userPrompt = buildUserPrompt(entry, products);
+      const aiModel = engineConfig.model || undefined;
+      const aiKey = engineConfig.apiKey || undefined;
       console.log('   → Generating article content...');
       const content = await generateWithRetry({
         system,
         prompt: userPrompt,
-        maxTokens: 4096,
+        maxTokens: engineConfig.maxTokens || 4096,
+        model: aiModel,
+        apiKey: aiKey,
       });
 
       // Step 2: Generate FAQ
@@ -356,7 +373,9 @@ async function main() {
         const faqRaw = await generateWithRetry({
           system: 'You are a helpful assistant that generates FAQ content in JSON format. Return only valid JSON, no code fences.',
           prompt: buildFaqPrompt(entry),
-          maxTokens: 1500,
+          maxTokens: engineConfig.faqMaxTokens || 1500,
+          model: aiModel,
+          apiKey: aiKey,
         });
         // Extract JSON from response (handle potential markdown fences)
         const jsonMatch = faqRaw.match(/\[[\s\S]*\]/);

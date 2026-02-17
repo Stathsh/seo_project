@@ -17,10 +17,11 @@ router.get('/content', (req, res) => {
   const keywords = readYaml(path.join(site.dataDir, 'keywords.yaml')) || [];
   const productsData = readJson(path.join(site.dataDir, 'products.json'));
   const products = productsData.products || [];
+  const engineConfig = readJson(path.join(site.dataDir, 'content-engine.json'));
   const activeTab = req.query.tab || 'articles';
   const message = req.query.msg || null;
 
-  const content = contentPage({ articles, keywords, products, activeTab, message });
+  const content = contentPage({ articles, keywords, products, engineConfig, activeTab, message });
   res.send(layout('Content', content, {
     activePage: 'content',
     siteName: site.config.name,
@@ -105,6 +106,36 @@ router.post('/content/products', (req, res) => {
 
   writeJson(prodFile, productsData);
   res.redirect('/content?tab=products&msg=Product added: ' + encodeURIComponent(name));
+});
+
+// ─── Content Engine actions ──────────────────────────────────
+
+router.post('/content/engine', (req, res) => {
+  const site = getActiveSite(null);
+  const engineFile = path.join(site.dataDir, 'content-engine.json');
+  const existing = readJson(engineFile);
+
+  const updated = {
+    model: req.body.model || existing.model || 'claude-sonnet-4-20250514',
+    maxTokens: parseInt(req.body.maxTokens, 10) || existing.maxTokens || 4096,
+    faqMaxTokens: parseInt(req.body.faqMaxTokens, 10) || existing.faqMaxTokens || 1500,
+    apiKey: req.body.apiKey !== undefined ? req.body.apiKey : (existing.apiKey || ''),
+    schedule: {
+      enabled: req.body['schedule.enabled'] === 'on',
+      articlesPerRun: parseInt(req.body['schedule.articlesPerRun'], 10) || existing.schedule?.articlesPerRun || 1,
+      delayBetweenMs: parseInt(req.body['schedule.delayBetweenMs'], 10) || existing.schedule?.delayBetweenMs || 2000,
+    },
+    prompts: {
+      base: req.body['prompts.base'] || existing.prompts?.base || '',
+      'best-for': req.body['prompts.best-for'] || existing.prompts?.['best-for'] || '',
+      vs: req.body['prompts.vs'] || existing.prompts?.vs || '',
+      info: req.body['prompts.info'] || existing.prompts?.info || '',
+      faq: req.body['prompts.faq'] || existing.prompts?.faq || '',
+    },
+  };
+
+  writeJson(engineFile, updated);
+  res.redirect('/content?tab=engine&msg=Content engine settings saved');
 });
 
 export default router;

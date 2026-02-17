@@ -24,7 +24,21 @@ dotenv.config();
 const site = resolveSite();
 const KEYWORDS_FILE = path.join(site.dataDir, 'keywords.yaml');
 const PRODUCTS_FILE = path.join(site.dataDir, 'products.json');
+const ENGINE_FILE = path.join(site.dataDir, 'content-engine.json');
 const ARTICLES_DIR = site.contentDir;
+
+// ─── Load content engine config ─────────────────────────────
+
+function loadEngineConfig() {
+  if (fs.existsSync(ENGINE_FILE)) {
+    try {
+      return JSON.parse(fs.readFileSync(ENGINE_FILE, 'utf-8'));
+    } catch { /* fall through */ }
+  }
+  return {};
+}
+
+const engineConfig = loadEngineConfig();
 
 // ─── Parse CLI args ─────────────────────────────────────────────
 
@@ -40,6 +54,12 @@ function parseArgs() {
     if (args[i] === '--dry-run') {
       dryRun = true;
     }
+  }
+
+  // Use schedule config as default if available
+  const schedule = engineConfig.schedule || {};
+  if (count === 1 && schedule.articlesPerRun) {
+    count = schedule.articlesPerRun;
   }
 
   return { count: Math.max(1, Math.min(count, 10)), dryRun };
@@ -75,7 +95,8 @@ function getProductById(products, id) {
 
 function getSystemPrompt(type) {
   const siteName = site.config.name || process.env.SITE_NAME || 'SmartHomeRanked';
-  const base = `You are an expert smart home product reviewer writing for ${siteName}, a trusted smart home review site. Your writing style is:
+  const prompts = engineConfig.prompts || {};
+  const base = (prompts.base || `You are an expert smart home product reviewer writing for {{SITE_NAME}}, a trusted smart home review site. Your writing style is:
 
 - Conversational and authoritative — like a knowledgeable friend who's tested everything
 - Opinionated with specific recommendations — never wishy-washy "it depends" conclusions
@@ -89,12 +110,15 @@ IMPORTANT FORMATTING RULES:
 - Write in markdown. Do not include frontmatter — that's handled separately.
 - Do NOT include an FAQ section — that's generated separately.
 - Do NOT wrap the entire output in a markdown code block.
-- Aim for genuinely helpful content that would make a real person bookmark the page.`;
+- Aim for genuinely helpful content that would make a real person bookmark the page.`).replace(/\{\{SITE_NAME\}\}/g, siteName);
 
-  const typeInstructions = {
-    'best-for': `${base}
+  const typePrompt = prompts[type];
+  if (typePrompt) {
+    return `${base}\n\n${typePrompt}`;
+  }
 
-You are writing a "Best [Product] for [Use Case]" article. Structure:
+  const fallbackInstructions = {
+    'best-for': `You are writing a "Best [Product] for [Use Case]" article. Structure:
 
 1. **Opening paragraph (2-3 sentences):** Immediately state your #1 pick and why.
 2. **"What to Look For" section (## heading):** 3-4 key factors for this use case.
@@ -104,9 +128,7 @@ You are writing a "Best [Product] for [Use Case]" article. Structure:
 
 Content length: 1500-2500 words total.`,
 
-    vs: `${base}
-
-You are writing a "[Product A] vs [Product B]" comparison article. Structure:
+    vs: `You are writing a "[Product A] vs [Product B]" comparison article. Structure:
 
 1. **Opening paragraph:** State the clear winner upfront.
 2. **"The Quick Verdict" section:** 3-4 sentence summary.
@@ -117,9 +139,7 @@ You are writing a "[Product A] vs [Product B]" comparison article. Structure:
 
 Content length: 1500-2000 words total.`,
 
-    info: `${base}
-
-You are writing an informational/how-to article. Structure:
+    info: `You are writing an informational/how-to article. Structure:
 
 1. **Opening paragraph:** Directly answer the question.
 2. **Detailed explanation (## headings):** 3-5 sections, 150-250 words each.
@@ -129,7 +149,7 @@ You are writing an informational/how-to article. Structure:
 Content length: 1000-1500 words total.`,
   };
 
-  return typeInstructions[type] || base;
+  return fallbackInstructions[type] ? `${base}\n\n${fallbackInstructions[type]}` : base;
 }
 
 function buildUserPrompt(entry, products) {
@@ -176,6 +196,10 @@ Remember: Answer the question directly in the first paragraph.`,
 }
 
 function buildFaqPrompt(entry) {
+  const prompts = engineConfig.prompts || {};
+  if (prompts.faq) {
+    return prompts.faq.replace(/\{\{KEYWORD\}\}/g, entry.keyword);
+  }
   return `Generate 5 FAQ questions and answers for an article about "${entry.keyword}" in the smart home niche.
 
 Requirements:
@@ -293,11 +317,15 @@ async function main() {
 
     try {
       // Step 1: Generate main content
+      const aiModel = engineConfig.model || undefined;
+      const aiKey = engineConfig.apiKey || undefined;
       console.log('   → Writing article...');
       const content = await generateWithRetry({
         system: getSystemPrompt(entry.type),
         prompt: buildUserPrompt(entry, products),
-        maxTokens: 4096,
+        maxTokens: engineConfig.maxTokens || 4096,
+        model: aiModel,
+        apiKey: aiKey,
       });
 
       // Step 2: Generate FAQ
@@ -307,7 +335,9 @@ async function main() {
         const faqRaw = await generateWithRetry({
           system: 'You are a helpful assistant that generates FAQ content in JSON format. Return only valid JSON, no code fences.',
           prompt: buildFaqPrompt(entry),
-          maxTokens: 1500,
+          maxTokens: engineConfig.faqMaxTokens || 1500,
+          model: aiModel,
+          apiKey: aiKey,
         });
         const jsonMatch = faqRaw.match(/\[[\s\S]*\]/);
         if (jsonMatch) faq = JSON.parse(jsonMatch[0]);
@@ -329,7 +359,8 @@ async function main() {
 
       // Rate limiting
       if (batch.indexOf(entry) < batch.length - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const delay = engineConfig.schedule?.delayBetweenMs || 2000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     } catch (error) {
       console.error(`   ❌ Error: ${error.message}`);
