@@ -1,28 +1,74 @@
 ---
+import { getTheme } from '../lib/theme';
+
 interface Props {
   headings: Array<{ depth: number; slug: string; text: string }>;
 }
 
 const { headings } = Astro.props;
 const tocItems = headings.filter(h => h.depth === 2 || h.depth === 3);
+const theme = getTheme();
+const layoutStyle = theme.layout.style;
+const isTechRadar = layoutStyle === 'techradar';
+const isEditorial = layoutStyle === 'editorial';
 ---
 
 {tocItems.length > 0 && (
-  <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Table of Contents</h3>
-    <nav>
-      <ul class="space-y-1.5 text-sm">
-        {tocItems.map(heading => (
-          <li class={heading.depth === 3 ? 'ml-4' : ''}>
-            <a
-              href={`#${heading.slug}`}
-              class="text-gray-600 hover:text-brand-600 transition-colors leading-snug block py-0.5"
-            >
-              {heading.text}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  </div>
+  isTechRadar ? (
+    <div class="border border-gray-200 overflow-hidden">
+      <div class="bg-brand-600 px-4 py-2.5">
+        <h3 class="text-xs font-bold text-white uppercase tracking-widest font-heading">Contents</h3>
+      </div>
+      <nav class="p-4">
+        <ul class="space-y-1.5 text-sm">
+          {tocItems.map(heading => (
+            <li class={heading.depth === 3 ? 'ml-4' : ''}>
+              <a
+                href={`#${heading.slug}`}
+                class="text-gray-600 hover:text-brand-600 transition-colors leading-snug block py-0.5"
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  ) : isEditorial ? (
+    <div class="border-l-2 border-gray-900 pl-4">
+      <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wide mb-3">In This Article</h3>
+      <nav>
+        <ul class="space-y-1.5 text-sm">
+          {tocItems.map(heading => (
+            <li class={heading.depth === 3 ? 'ml-4' : ''}>
+              <a
+                href={`#${heading.slug}`}
+                class="text-gray-500 hover:text-gray-900 transition-colors leading-snug block py-0.5"
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  ) : (
+    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+      <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Table of Contents</h3>
+      <nav>
+        <ul class="space-y-1.5 text-sm">
+          {tocItems.map(heading => (
+            <li class={heading.depth === 3 ? 'ml-4' : ''}>
+              <a
+                href={`#${heading.slug}`}
+                class="text-gray-600 hover:text-brand-600 transition-colors leading-snug block py-0.5"
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  )
 )}

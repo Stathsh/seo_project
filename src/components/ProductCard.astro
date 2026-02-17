@@ -1,4 +1,6 @@
 ---
+import { getTheme } from '../lib/theme';
+
 interface Props {
   name: string;
   brand: string;
@@ -29,17 +31,46 @@ const {
   image,
 } = Astro.props;
 
+const theme = getTheme();
+const layoutStyle = theme.layout.style;
+const isTechRadar = layoutStyle === 'techradar';
+const isEditorial = layoutStyle === 'editorial';
+
 const affiliateUrl = `https://amazon.com/dp/${asin}?tag=${affiliateTag}`;
 const stars = Math.round(rating * 2) / 2;
 const fullStars = Math.floor(stars);
 const hasHalf = stars % 1 !== 0;
 const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
 const topSpecs = Object.entries(specs).slice(0, 4);
+
+const cardClass = isTechRadar
+  ? 'border border-gray-200 p-6 bg-white hover:shadow-md transition-shadow'
+  : isEditorial
+    ? 'border border-gray-200 p-6 bg-white'
+    : 'border border-gray-200 rounded-xl p-6 bg-white hover:shadow-md transition-shadow';
+
+const badgeClass = isTechRadar
+  ? 'inline-block bg-brand-600 text-white text-xs font-bold px-3 py-1 mb-3 uppercase tracking-widest font-heading'
+  : isEditorial
+    ? 'inline-block bg-gray-900 text-white text-xs font-bold px-3 py-1 mb-3 uppercase tracking-wide'
+    : 'inline-block bg-brand-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wide';
+
+const ctaClass = isTechRadar
+  ? 'inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 transition-colors text-sm uppercase tracking-wide font-heading'
+  : isEditorial
+    ? 'inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-700 text-white font-semibold px-5 py-2.5 transition-colors text-sm'
+    : 'inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm';
+
+const imageClass = isTechRadar
+  ? 'bg-gray-100 aspect-square flex items-center justify-center'
+  : isEditorial
+    ? 'bg-gray-50 aspect-square flex items-center justify-center'
+    : 'bg-gray-100 rounded-lg aspect-square flex items-center justify-center';
 ---
 
-<div class="border border-gray-200 rounded-xl p-6 bg-white hover:shadow-md transition-shadow">
+<div class={cardClass}>
   {badge && (
-    <span class="inline-block bg-brand-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wide">
+    <span class={badgeClass}>
       {badge}
     </span>
   )}
@@ -47,7 +78,7 @@ const topSpecs = Object.entries(specs).slice(0, 4);
   <div class="flex flex-col sm:flex-row gap-5">
     <!-- Product image placeholder -->
     <div class="sm:w-40 flex-shrink-0">
-      <div class="bg-gray-100 rounded-lg aspect-square flex items-center justify-center">
+      <div class={imageClass}>
         <svg class="w-16 h-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
@@ -55,7 +86,7 @@ const topSpecs = Object.entries(specs).slice(0, 4);
     </div>
 
     <div class="flex-1 min-w-0">
-      <h3 class="text-xl font-bold text-gray-900">{name}</h3>
+      <h3 class:list={['text-xl font-bold text-gray-900', isTechRadar && 'font-heading']}>{name}</h3>
       <p class="text-sm text-gray-500 mt-0.5">by {brand}</p>
 
       <!-- Rating -->
@@ -128,7 +159,7 @@ const topSpecs = Object.entries(specs).slice(0, 4);
           href={affiliateUrl}
           target="_blank"
           rel="nofollow noopener sponsored"
-          class="inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm"
+          class={ctaClass}
         >
           Check Price on Amazon
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

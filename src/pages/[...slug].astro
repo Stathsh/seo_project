@@ -3,7 +3,6 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import TableOfContents from '../components/TableOfContents.astro';
-import AffiliateDisclosure from '../components/AffiliateDisclosure.astro';
 import AuthorBox from '../components/AuthorBox.astro';
 import FAQ from '../components/FAQ.astro';
 import ProductCard from '../components/ProductCard.astro';
@@ -11,8 +10,13 @@ import ComparisonTable from '../components/ComparisonTable.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import categoriesData from '../../data/categories.json';
 import { getSiteConfig } from '../lib/site-config';
+import { getTheme } from '../lib/theme';
 
 const config = getSiteConfig();
+const theme = getTheme();
+const layoutStyle = theme.layout.style;
+const isTechRadar = layoutStyle === 'techradar';
+const isEditorial = layoutStyle === 'editorial';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles');
@@ -35,7 +39,6 @@ const breadcrumbs = [
   { name: data.title, url: `/${data.slug}/` },
 ];
 
-const showAffiliateDisclosure = data.type === 'best-for' || data.type === 'vs';
 const showProductCards = data.type === 'best-for' && data.products && data.products.length > 0;
 const showComparisonTable = data.products && data.products.length >= 2;
 
@@ -70,51 +73,93 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
   <article class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs items={breadcrumbs} />
 
-    <div class="lg:grid lg:grid-cols-[1fr_260px] lg:gap-10 mt-6">
+    <div class="lg:grid lg:grid-cols-[1fr_280px] lg:gap-10 mt-6">
       <!-- Main content -->
       <div class="min-w-0">
-        <header class="mb-8">
-          <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-            {data.title}
-          </h1>
-          <div class="flex items-center gap-4 mt-4 text-sm text-gray-500">
-            <span>By <strong class="text-gray-700">{config.author.name}</strong></span>
-            <span>&middot;</span>
-            <time datetime={data.dateModified}>
-              Updated {new Date(data.dateModified).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-            </time>
-          </div>
-        </header>
-
-        {showAffiliateDisclosure && <AffiliateDisclosure />}
+        {isTechRadar ? (
+          <header class="mb-8">
+            <span class="text-brand-600 text-xs font-bold uppercase tracking-widest">{categoryName}</span>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mt-2 font-heading">
+              {data.title}
+            </h1>
+            <div class="flex items-center gap-3 mt-4 text-sm text-gray-500">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center flex-shrink-0">
+                  <span class="text-xs font-bold text-white">{config.author.initials}</span>
+                </div>
+                <span class="font-semibold text-gray-800">{config.author.name}</span>
+              </div>
+              <span class="text-gray-300">|</span>
+              <time datetime={data.dateModified}>
+                Updated {new Date(data.dateModified).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </time>
+            </div>
+          </header>
+        ) : isEditorial ? (
+          <header class="mb-8 pb-6 border-b border-gray-200">
+            <h1 class="text-4xl sm:text-5xl font-black text-gray-900 leading-tight tracking-tight font-heading">
+              {data.title}
+            </h1>
+            <div class="flex items-center gap-4 mt-4 text-sm text-gray-500">
+              <span>By <strong class="text-gray-900">{config.author.name}</strong></span>
+              <span>&middot;</span>
+              <time datetime={data.dateModified}>
+                Updated {new Date(data.dateModified).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </time>
+            </div>
+          </header>
+        ) : (
+          <header class="mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
+              {data.title}
+            </h1>
+            <div class="flex items-center gap-4 mt-4 text-sm text-gray-500">
+              <span>By <strong class="text-gray-700">{config.author.name}</strong></span>
+              <span>&middot;</span>
+              <time datetime={data.dateModified}>
+                Updated {new Date(data.dateModified).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </time>
+            </div>
+          </header>
+        )}
 
         {/* Quick comparison table near the top for best-for and vs pages */}
         {showComparisonTable && (
           <div class="mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-3">Quick Comparison</h2>
+            <h2 class:list={[
+              'text-xl font-bold text-gray-900 mb-3',
+              (isTechRadar || isEditorial) && 'font-heading',
+            ]}>Quick Comparison</h2>
             <ComparisonTable products={data.products!} />
           </div>
         )}
 
-        <div class="prose prose-lg max-w-none
-          prose-headings:font-bold prose-headings:text-gray-900
-          prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-          prose-p:text-gray-700 prose-p:leading-relaxed
-          prose-a:text-brand-600 prose-a:font-medium hover:prose-a:text-brand-800
-          prose-strong:text-gray-900
-          prose-li:text-gray-700
-          prose-table:border-collapse prose-table:w-full
-          prose-th:bg-gray-50 prose-th:p-3 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-th:text-gray-700 prose-th:border prose-th:border-gray-200
-          prose-td:p-3 prose-td:border prose-td:border-gray-200 prose-td:text-sm
-        ">
+        <div class:list={[
+          'prose prose-lg max-w-none',
+          'prose-headings:font-bold prose-headings:text-gray-900',
+          'prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4',
+          'prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3',
+          'prose-p:text-gray-700 prose-p:leading-relaxed',
+          'prose-a:text-brand-600 prose-a:font-medium hover:prose-a:text-brand-800',
+          'prose-strong:text-gray-900',
+          'prose-li:text-gray-700',
+          'prose-table:border-collapse prose-table:w-full',
+          'prose-th:bg-gray-50 prose-th:p-3 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-th:text-gray-700 prose-th:border prose-th:border-gray-200',
+          'prose-td:p-3 prose-td:border prose-td:border-gray-200 prose-td:text-sm',
+          isTechRadar && 'prose-headings:font-heading',
+          isEditorial && 'prose-headings:font-heading',
+        ]}>
           <Content />
         </div>
 
         {/* Product recommendation cards for best-for pages */}
         {showProductCards && (
           <div class="mt-10 space-y-6">
-            <h2 class="text-2xl font-bold text-gray-900">Our Top Picks</h2>
+            <h2 class:list={[
+              'text-2xl font-bold text-gray-900',
+              (isTechRadar || isEditorial) && 'font-heading',
+              isTechRadar && 'uppercase tracking-wide',
+            ]}>Our Top Picks</h2>
             {data.products!.map((product, i) => (
               <ProductCard
                 name={product.name}
@@ -139,8 +184,15 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
 
         {/* Related Articles */}
         {relatedArticles.length > 0 && (
-          <section class="mt-12 border-t border-gray-200 pt-10">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Articles</h2>
+          <section class:list={[
+            'mt-12 pt-10',
+            isTechRadar ? 'border-t-2 border-brand-600' : 'border-t border-gray-200',
+          ]}>
+            <h2 class:list={[
+              'text-2xl font-bold text-gray-900 mb-6',
+              (isTechRadar || isEditorial) && 'font-heading',
+              isTechRadar && 'uppercase tracking-wide',
+            ]}>Related Articles</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {relatedArticles.map(a => (
                 <ArticleCard

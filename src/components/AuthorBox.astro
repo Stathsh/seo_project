@@ -1,20 +1,58 @@
 ---
 import { getSiteConfig } from '../lib/site-config';
+import { getTheme } from '../lib/theme';
+
 const config = getSiteConfig();
 const { author } = config;
+const theme = getTheme();
+const layoutStyle = theme.layout.style;
+const isTechRadar = layoutStyle === 'techradar';
+const isEditorial = layoutStyle === 'editorial';
 ---
 
-<div class="mt-12 p-6 bg-gray-50 rounded-xl border border-gray-200">
-  <div class="flex items-start gap-4">
-    <div class="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
-      <span class="text-2xl font-bold text-brand-700">{author.initials}</span>
-    </div>
-    <div>
-      <p class="font-bold text-gray-900">{author.name}</p>
-      <p class="text-sm text-gray-500 mt-0.5">{author.title}</p>
-      <p class="text-sm text-gray-600 mt-2 leading-relaxed">
-        {author.bio}
-      </p>
+{isTechRadar ? (
+  <div class="mt-12 pt-8 border-t-2 border-brand-600">
+    <div class="flex items-start gap-4">
+      <div class="w-14 h-14 rounded-full bg-brand-600 flex items-center justify-center flex-shrink-0">
+        <span class="text-xl font-bold text-white">{author.initials}</span>
+      </div>
+      <div>
+        <p class="font-bold text-gray-900 font-heading uppercase text-sm tracking-wide">{author.name}</p>
+        <p class="text-xs text-brand-600 font-semibold uppercase tracking-wider mt-0.5">{author.title}</p>
+        <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+          {author.bio}
+        </p>
+      </div>
     </div>
   </div>
-</div>
+) : isEditorial ? (
+  <div class="mt-12 pt-8 border-t border-gray-300">
+    <div class="flex items-start gap-4">
+      <div class="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+        <span class="text-xl font-bold text-gray-700">{author.initials}</span>
+      </div>
+      <div>
+        <p class="font-bold text-gray-900 text-lg">{author.name}</p>
+        <p class="text-sm text-gray-500 italic mt-0.5">{author.title}</p>
+        <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+          {author.bio}
+        </p>
+      </div>
+    </div>
+  </div>
+) : (
+  <div class="mt-12 p-6 bg-gray-50 rounded-xl border border-gray-200">
+    <div class="flex items-start gap-4">
+      <div class="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
+        <span class="text-2xl font-bold text-brand-700">{author.initials}</span>
+      </div>
+      <div>
+        <p class="font-bold text-gray-900">{author.name}</p>
+        <p class="text-sm text-gray-500 mt-0.5">{author.title}</p>
+        <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+          {author.bio}
+        </p>
+      </div>
+    </div>
+  </div>
+)}

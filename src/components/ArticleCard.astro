@@ -1,4 +1,6 @@
 ---
+import { getTheme } from '../lib/theme';
+
 interface Props {
   title: string;
   description: string;
@@ -9,6 +11,10 @@ interface Props {
 }
 
 const { title, description, slug, category, type, dateModified } = Astro.props;
+const theme = getTheme();
+const layoutStyle = theme.layout.style;
+const isTechRadar = layoutStyle === 'techradar';
+const isEditorial = layoutStyle === 'editorial';
 
 const typeLabels: Record<string, string> = {
   'best-for': 'Best Picks',
@@ -16,24 +22,68 @@ const typeLabels: Record<string, string> = {
   'info': 'Guide',
 };
 
-const typeColors: Record<string, string> = {
+const typeColorsTechRadar: Record<string, string> = {
+  'best-for': 'bg-brand-600 text-white',
+  'vs': 'bg-gray-800 text-white',
+  'info': 'bg-gray-600 text-white',
+};
+
+const typeColorsEditorial: Record<string, string> = {
+  'best-for': 'text-gray-900 border border-gray-300',
+  'vs': 'text-gray-900 border border-gray-300',
+  'info': 'text-gray-900 border border-gray-300',
+};
+
+const typeColorsDefault: Record<string, string> = {
   'best-for': 'bg-green-100 text-green-700',
   'vs': 'bg-purple-100 text-purple-700',
   'info': 'bg-blue-100 text-blue-700',
 };
 ---
 
-<a href={`/${slug}/`} class="group block bg-white border border-gray-200 rounded-xl p-5 hover:border-brand-300 hover:shadow-md transition-all">
-  <div class="flex items-center gap-2 mb-2">
-    <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${typeColors[type] || 'bg-gray-100 text-gray-600'}`}>
-      {typeLabels[type] || type}
-    </span>
-    <span class="text-xs text-gray-400">
-      {new Date(dateModified).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-    </span>
-  </div>
-  <h3 class="font-bold text-gray-900 group-hover:text-brand-700 transition-colors leading-snug">
-    {title}
-  </h3>
-  <p class="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">{description}</p>
-</a>
+{isTechRadar ? (
+  <a href={`/${slug}/`} class="group block bg-white border border-gray-200 p-5 hover:border-brand-500 hover:shadow-md transition-all">
+    <div class="flex items-center gap-2 mb-2">
+      <span class={`text-xs font-bold px-2 py-0.5 uppercase tracking-wider ${typeColorsTechRadar[type] || 'bg-gray-600 text-white'}`}>
+        {typeLabels[type] || type}
+      </span>
+      <span class="text-xs text-gray-400">
+        {new Date(dateModified).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+      </span>
+    </div>
+    <h3 class="font-bold text-gray-900 group-hover:text-brand-600 transition-colors leading-snug font-heading">
+      {title}
+    </h3>
+    <p class="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">{description}</p>
+  </a>
+) : isEditorial ? (
+  <a href={`/${slug}/`} class="group block py-5 border-b border-gray-200 hover:bg-gray-50 transition-all px-2 -mx-2">
+    <div class="flex items-center gap-2 mb-1.5">
+      <span class={`text-xs font-semibold px-2 py-0.5 ${typeColorsEditorial[type] || 'text-gray-900 border border-gray-300'}`}>
+        {typeLabels[type] || type}
+      </span>
+      <span class="text-xs text-gray-400">
+        {new Date(dateModified).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+      </span>
+    </div>
+    <h3 class="text-lg font-bold text-gray-900 group-hover:text-gray-600 transition-colors leading-snug font-heading">
+      {title}
+    </h3>
+    <p class="text-sm text-gray-500 mt-1 line-clamp-2 leading-relaxed">{description}</p>
+  </a>
+) : (
+  <a href={`/${slug}/`} class="group block bg-white border border-gray-200 rounded-xl p-5 hover:border-brand-300 hover:shadow-md transition-all">
+    <div class="flex items-center gap-2 mb-2">
+      <span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${typeColorsDefault[type] || 'bg-gray-100 text-gray-600'}`}>
+        {typeLabels[type] || type}
+      </span>
+      <span class="text-xs text-gray-400">
+        {new Date(dateModified).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+      </span>
+    </div>
+    <h3 class="font-bold text-gray-900 group-hover:text-brand-700 transition-colors leading-snug">
+      {title}
+    </h3>
+    <p class="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">{description}</p>
+  </a>
+)}
