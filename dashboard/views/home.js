@@ -9,7 +9,7 @@ export function homePage({ articles, products, totalWords, siteName, quicklinks 
   const avgWords = articles.length > 0 ? Math.round(totalWords / articles.length) : 0;
 
   const defaultLinks = [
-    { name: 'Amazon Associates', url: 'https://affiliate-program.amazon.com/', icon: 'cart' },
+    { name: 'Amazon Associates', url: 'https://affiliate-program.amazon.com.au/', icon: 'cart' },
     { name: 'Google AdSense', url: 'https://www.google.com/adsense/', icon: 'ad' },
     { name: 'Google Search Console', url: 'https://search.google.com/search-console', icon: 'search' },
     { name: 'Google Analytics', url: 'https://analytics.google.com/', icon: 'chart' },
