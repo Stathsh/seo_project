@@ -20,11 +20,10 @@ router.get('/content', (req, res) => {
   const productsData = readJson(path.join(site.dataDir, 'products.json'));
   const products = productsData.products || [];
   const engineConfig = readJson(path.join(site.dataDir, 'content-engine.json'));
-  const apiUsage = readJson(path.join(site.dataDir, 'api-usage.json'));
   const activeTab = req.query.tab || 'articles';
   const message = req.query.msg || null;
 
-  const content = contentPage({ articles, keywords, products, engineConfig, activeTab, message, apiUsage });
+  const content = contentPage({ articles, keywords, products, engineConfig, activeTab, message });
   res.send(layout('Content', content, {
     activePage: 'content',
     siteName: site.config.name,
@@ -299,10 +298,10 @@ router.post('/content/engine', (req, res) => {
   const clampedAmount = Math.min(amount, maxAmounts[frequency] || 5);
 
   const updated = {
-    model: req.body.model || existing.model || 'claude-sonnet-4-20250514',
-    maxTokens: parseInt(req.body.maxTokens, 10) || existing.maxTokens || 4096,
-    faqMaxTokens: parseInt(req.body.faqMaxTokens, 10) || existing.faqMaxTokens || 1500,
-    apiKey: req.body.apiKey !== undefined ? req.body.apiKey : (existing.apiKey || ''),
+    model: existing.model || 'claude-sonnet-4-20250514',
+    maxTokens: existing.maxTokens || 4096,
+    faqMaxTokens: existing.faqMaxTokens || 1500,
+    apiKey: existing.apiKey || '',
     schedule: {
       enabled: req.body['schedule.enabled'] === 'on',
       frequency,

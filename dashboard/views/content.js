@@ -61,7 +61,7 @@ export function contentPage({ articles, keywords, products, engineConfig = {}, a
 
     <!-- Content Engine Tab -->
     <div id="tab-engine" class="tab-panel ${activeTab !== 'engine' ? 'hidden' : ''}">
-      ${engineTab(engineConfig, articles, apiUsage)}
+      ${engineTab(engineConfig, articles)}
     </div>
 
     <script>
@@ -358,16 +358,11 @@ function productsTab(products) {
 
 // ─── Content Engine tab ─────────────────────────────────────
 
-function engineTab(config, articles, apiUsage) {
-  const model = config.model || 'claude-sonnet-4-20250514';
-  const maxTokens = config.maxTokens || 4096;
-  const faqMaxTokens = config.faqMaxTokens || 1500;
-  const hasApiKey = !!(config.apiKey);
+function engineTab(config, articles) {
   const schedule = config.schedule || {};
   const prompts = config.prompts || {};
   const trendResearch = config.trendResearch || {};
   const defaultTrendPrompt = 'You are an expert SEO keyword researcher specializing in smart home and consumer electronics. You generate practical, search-optimized keyword ideas that real people search for. Always return valid YAML.';
-  const calls = (apiUsage && Array.isArray(apiUsage.calls)) ? apiUsage.calls : [];
 
   // --- Trend research prompts (multi-prompt support) ---
   const trendPrompts = Array.isArray(trendResearch.prompts) ? trendResearch.prompts : [];
@@ -393,15 +388,6 @@ function engineTab(config, articles, apiUsage) {
     const d = new Date(a.datePublished || a.dateModified || a.modified);
     return d >= monthAgo;
   }).length;
-
-  // --- API usage stats ---
-  const usageStats = computeUsageStats(calls);
-
-  const models = [
-    { value: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4 (Recommended)' },
-    { value: 'claude-opus-4-20250514', label: 'Claude Opus 4 (Most capable)' },
-    { value: 'claude-haiku-3-5-20241022', label: 'Claude Haiku 3.5 (Fastest/cheapest)' },
-  ];
 
   const promptTabs = [
     { id: 'base', label: 'Base System', desc: 'Core instructions sent with every generation. Use {{SITE_NAME}} as a placeholder.' },
@@ -537,112 +523,7 @@ function engineTab(config, articles, apiUsage) {
       </div>
     </details>
 
-    <!-- API Usage (collapsible) -->
-    <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3">
-      <summary class="flex items-center justify-between p-5">
-        <div>
-          <h2 class="text-lg font-semibold text-gray-900">API Usage</h2>
-          <p class="text-xs text-gray-400 mt-0.5">
-            ${calls.length > 0
-              ? `${calls.length} API calls &middot; Est. $${usageStats.find(s => s.label === 'All Time').cost.toFixed(2)} total`
-              : 'No usage data yet'}
-          </p>
-        </div>
-        ${chevron}
-      </summary>
-      <div class="px-5 pb-5 border-t border-gray-100 pt-4">
-        ${calls.length > 0 ? `
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-            <div class="bg-gray-50 rounded-lg p-3">
-              <p class="text-xs font-medium text-gray-500 uppercase">Total Calls</p>
-              <p class="text-xl font-bold text-gray-900">${calls.length.toLocaleString()}</p>
-            </div>
-            <div class="bg-gray-50 rounded-lg p-3">
-              <p class="text-xs font-medium text-gray-500 uppercase">Input Tokens</p>
-              <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').inputTokens.toLocaleString()}</p>
-            </div>
-            <div class="bg-gray-50 rounded-lg p-3">
-              <p class="text-xs font-medium text-gray-500 uppercase">Output Tokens</p>
-              <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').outputTokens.toLocaleString()}</p>
-            </div>
-            <div class="bg-gray-50 rounded-lg p-3">
-              <p class="text-xs font-medium text-gray-500 uppercase">Est. Cost</p>
-              <p class="text-xl font-bold text-green-600">$${usageStats.find(s => s.label === 'All Time').cost.toFixed(2)}</p>
-            </div>
-          </div>
-          <div class="overflow-hidden rounded-lg border border-gray-200">
-            <table class="min-w-full text-sm">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Period</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calls</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Input</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Output</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200">
-                ${usageStats.map(s => `
-                  <tr>
-                    <td class="px-4 py-2 font-medium text-gray-700">${s.label}</td>
-                    <td class="px-4 py-2 text-gray-600">${s.calls.toLocaleString()}</td>
-                    <td class="px-4 py-2 text-gray-600">${s.inputTokens.toLocaleString()}</td>
-                    <td class="px-4 py-2 text-gray-600">${s.outputTokens.toLocaleString()}</td>
-                    <td class="px-4 py-2 text-gray-600">$${s.cost.toFixed(2)}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        ` : `
-          <div class="bg-gray-50 rounded-lg p-6 text-center">
-            <p class="text-sm text-gray-400">No usage data yet. API usage will be tracked when articles are generated.</p>
-          </div>
-        `}
-      </div>
-    </details>
-
     <form method="POST" action="/content/engine">
-
-      <!-- AI Model Settings (collapsible) -->
-      <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3" open>
-        <summary class="flex items-center justify-between p-5">
-          <div>
-            <h2 class="text-lg font-semibold text-gray-900">AI Model Settings</h2>
-            <p class="text-xs text-gray-400 mt-0.5">${models.find(m => m.value === model)?.label || model}</p>
-          </div>
-          ${chevron}
-        </summary>
-        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
-              <select name="model" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                ${models.map(m => `
-                  <option value="${m.value}" ${model === m.value ? 'selected' : ''}>${m.label}</option>
-                `).join('')}
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Max Tokens (Articles)</label>
-              <input name="maxTokens" type="number" value="${maxTokens}" min="1000" max="8192" step="256"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Max Tokens (FAQ)</label>
-              <input name="faqMaxTokens" type="number" value="${faqMaxTokens}" min="500" max="4096" step="100"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
-              <input name="apiKey" type="password" value="${hasApiKey ? config.apiKey : ''}"
-                placeholder="${hasApiKey ? '••••••••' : 'Uses .env key if empty'}"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-              <p class="text-xs text-gray-400 mt-1">${hasApiKey ? 'Custom key set' : 'Using ANTHROPIC_API_KEY from .env'}</p>
-            </div>
-          </div>
-        </div>
-      </details>
 
       <!-- Publishing Schedule (collapsible) -->
       <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3">
@@ -798,43 +679,6 @@ function relativeTime(d) {
   if (diffHrs < 24) return `${diffHrs}h ago`;
   if (diffDays < 30) return `${diffDays}d ago`;
   return `${Math.floor(diffDays / 30)}mo ago`;
-}
-
-const MODEL_PRICING = {
-  'claude-sonnet-4-20250514': { input: 3.0, output: 15.0 },
-  'claude-opus-4-20250514': { input: 15.0, output: 75.0 },
-  'claude-haiku-3-5-20241022': { input: 0.80, output: 4.0 },
-};
-
-function estimateCost(calls) {
-  let total = 0;
-  for (const c of calls) {
-    const pricing = MODEL_PRICING[c.model] || MODEL_PRICING['claude-sonnet-4-20250514'];
-    total += ((c.inputTokens || 0) / 1_000_000) * pricing.input;
-    total += ((c.outputTokens || 0) / 1_000_000) * pricing.output;
-  }
-  return total;
-}
-
-function computeUsageStats(calls) {
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const weekStart = new Date(todayStart); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-  const periods = [
-    { label: 'Today', start: todayStart },
-    { label: 'This Week', start: weekStart },
-    { label: 'This Month', start: monthStart },
-    { label: 'All Time', start: new Date(0) },
-  ];
-
-  return periods.map(p => {
-    const filtered = calls.filter(c => new Date(c.timestamp) >= p.start);
-    const inputTokens = filtered.reduce((s, c) => s + (c.inputTokens || 0), 0);
-    const outputTokens = filtered.reduce((s, c) => s + (c.outputTokens || 0), 0);
-    return { label: p.label, calls: filtered.length, inputTokens, outputTokens, cost: estimateCost(filtered) };
-  });
 }
 
 function escHtml(str) {
