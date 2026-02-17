@@ -41,7 +41,9 @@ const isEditorial = layoutStyle === 'editorial';
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="google-adsense-account" content="ca-pub-4961013278097698">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4961013278097698" crossorigin="anonymous"></script>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href={theme.fonts.googleUrl} rel="stylesheet" />
@@ -59,8 +61,9 @@ const isEditorial = layoutStyle === 'editorial';
     <header class="bg-[#0b0b1a] sticky top-0 z-50">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex items-center justify-between h-14">
-          <a href="/" class="text-2xl font-bold text-white font-heading tracking-wide uppercase">
-            {siteName}
+          <a href="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <img src="/logo.png" alt={siteName} class="h-9 w-9 rounded-full" />
+            <span class="text-xl font-bold text-white font-heading tracking-wide uppercase">{siteName}</span>
           </a>
           <nav class="hidden md:flex items-center gap-1">
             {config.navigation.map(item => (
@@ -87,8 +90,9 @@ const isEditorial = layoutStyle === 'editorial';
     <header class="border-b-2 border-gray-900 bg-white sticky top-0 z-50">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex items-center justify-between h-16">
-          <a href="/" class="text-2xl font-black text-gray-900 tracking-tight font-heading hover:text-gray-700 transition-colors">
-            {siteName}
+          <a href="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <img src="/logo.png" alt={siteName} class="h-9 w-9 rounded-full" />
+            <span class="text-2xl font-black text-gray-900 tracking-tight font-heading">{siteName}</span>
           </a>
           <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             {config.navigation.map(item => (
@@ -114,12 +118,9 @@ const isEditorial = layoutStyle === 'editorial';
     <header class="border-b border-gray-200 bg-white sticky top-0 z-50">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex items-center justify-between h-16">
-          <a href="/" class="flex items-center gap-2 text-xl font-bold text-brand-700 hover:text-brand-800 transition-colors">
-            <svg class="w-8 h-8" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="2">
-              <path d="M16 4l12 7v10l-12 7L4 21V11l12-7z" />
-              <circle cx="16" cy="16" r="4" />
-            </svg>
-            {siteName}
+          <a href="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <img src="/logo.png" alt={siteName} class="h-9 w-9 rounded-full" />
+            <span class="text-xl font-bold text-brand-700 font-heading">{siteName}</span>
           </a>
           <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             {config.navigation.map(item => (
@@ -153,7 +154,10 @@ const isEditorial = layoutStyle === 'editorial';
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <a href="/" class="text-xl font-bold text-white font-heading uppercase tracking-wide">{siteName}</a>
+            <a href="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+              <img src="/logo.png" alt={siteName} class="h-8 w-8 rounded-full" />
+              <span class="text-xl font-bold text-white font-heading uppercase tracking-wide">{siteName}</span>
+            </a>
             <p class="mt-3 text-sm text-gray-400 leading-relaxed">
               {config.branding.footerDescription}
             </p>
@@ -196,7 +200,10 @@ const isEditorial = layoutStyle === 'editorial';
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <a href="/" class="text-xl font-black text-gray-900 font-heading">{siteName}</a>
+            <a href="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+              <img src="/logo.png" alt={siteName} class="h-8 w-8 rounded-full" />
+              <span class="text-xl font-black text-gray-900 font-heading">{siteName}</span>
+            </a>
             <p class="mt-2 text-sm text-gray-500">
               {config.branding.footerDescription}
             </p>
@@ -231,7 +238,10 @@ const isEditorial = layoutStyle === 'editorial';
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <a href="/" class="text-lg font-bold text-brand-700">{siteName}</a>
+            <a href="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+              <img src="/logo.png" alt={siteName} class="h-8 w-8 rounded-full" />
+              <span class="text-lg font-bold text-brand-700">{siteName}</span>
+            </a>
             <p class="mt-2 text-sm text-gray-500">
               {config.branding.footerDescription}
             </p>
