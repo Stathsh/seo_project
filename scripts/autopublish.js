@@ -81,10 +81,17 @@ function findPendingKeywords() {
   const keywords = yaml.load(fs.readFileSync(KEYWORDS_FILE, 'utf-8'));
   if (!Array.isArray(keywords)) return [];
 
-  return keywords.filter((entry) => {
-    const articlePath = path.join(ARTICLES_DIR, `${entry.slug}.md`);
-    return !fs.existsSync(articlePath);
-  });
+  return keywords
+    .filter((entry) => {
+      const articlePath = path.join(ARTICLES_DIR, `${entry.slug}.md`);
+      return !fs.existsSync(articlePath);
+    })
+    .sort((a, b) => {
+      // Oldest dateAdded first (highest priority); keywords without dateAdded go first
+      const aDate = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
+      const bDate = b.dateAdded ? new Date(b.dateAdded).getTime() : 0;
+      return aDate - bDate;
+    });
 }
 
 // ─── Reuse generation logic from generate-content.js ────────────

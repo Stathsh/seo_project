@@ -173,119 +173,89 @@ function articlesTab(articles) {
 // ─── Keywords tab ───────────────────────────────────────────
 
 function keywordsTab(keywords, articleSlugs) {
-  const pending = keywords.filter(k => !articleSlugs.includes(k.slug));
-  const generated = keywords.filter(k => articleSlugs.includes(k.slug));
+  const pendingCount = keywords.filter(k => !articleSlugs.includes(k.slug)).length;
+
+  // Sort: pending first (oldest dateAdded first for priority), then generated
+  const sorted = [...keywords].sort((a, b) => {
+    const aPending = !articleSlugs.includes(a.slug);
+    const bPending = !articleSlugs.includes(b.slug);
+    if (aPending && !bPending) return -1;
+    if (!aPending && bPending) return 1;
+    // Within same status, sort by dateAdded (oldest first for pending = highest priority)
+    if (aPending && bPending) {
+      const aDate = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
+      const bDate = b.dateAdded ? new Date(b.dateAdded).getTime() : 0;
+      return aDate - bDate;
+    }
+    return 0;
+  });
 
   return `
-    <!-- Pending Keywords -->
-    ${pending.length > 0 ? `
-    <div class="bg-amber-50 rounded-lg border border-amber-200 p-5 mb-6">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-base font-semibold text-amber-900">
-          <svg class="w-4 h-4 inline-block mr-1 -mt-0.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          ${pending.length} Pending Keyword${pending.length !== 1 ? 's' : ''}
-        </h2>
-        <form method="POST" action="/content/keywords/generate-all">
-          <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700">
-            Generate All Pending
-          </button>
-        </form>
-      </div>
-      <div class="space-y-2">
-        ${pending.map(k => `
-          <div class="flex items-center justify-between py-2 border-b border-amber-200/50 last:border-0">
-            <div>
-              <span class="text-sm font-medium text-gray-900">${escHtml(k.keyword)}</span>
-              <span class="ml-2 text-xs px-2 py-0.5 rounded-full ${typeColor(k.type)}">${k.type}</span>
-              <span class="ml-1 text-xs text-gray-400">${k.category}</span>
-            </div>
-            <form method="POST" action="/content/keywords/generate" class="inline">
-              <input type="hidden" name="keyword" value="${escHtml(k.keyword)}" />
-              <button type="submit" class="text-xs bg-brand-600 text-white px-3 py-1 rounded hover:bg-brand-700">Generate</button>
-            </form>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-    ` : `
-    <div class="bg-green-50 rounded-lg border border-green-200 p-4 mb-6">
-      <p class="text-sm text-green-700 font-medium">All keywords have articles generated.</p>
-    </div>
-    `}
-
     <!-- Add keyword form -->
     <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-4">Add Keyword</h2>
-      <form method="POST" action="/content/keywords" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+      <form method="POST" action="/content/keywords" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
         <input name="keyword" placeholder="Keyword (e.g., best robot vacuum for pet hair)" required
-          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500" />
-        <input name="slug" placeholder="slug (auto-generated if empty)"
-          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500" />
+          class="sm:col-span-2 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500" />
         <select name="type" required class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
           <option value="best-for">best-for</option>
           <option value="vs">vs</option>
           <option value="info">info</option>
         </select>
-        <div class="flex gap-2">
-          <input name="category" placeholder="category slug" required
-            class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500" />
-          <button type="submit" class="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-800 whitespace-nowrap">
-            Add
-          </button>
-        </div>
+        <input name="category" placeholder="category slug" required
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500" />
+        <button type="submit" class="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-800 whitespace-nowrap">
+          Add Keyword
+        </button>
       </form>
     </div>
 
     <!-- Keywords table -->
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+        <p class="text-sm text-gray-600">${keywords.length} keyword${keywords.length !== 1 ? 's' : ''} total &middot; <span class="${pendingCount > 0 ? 'text-amber-600 font-medium' : 'text-green-600'}">${pendingCount} pending</span></p>
+      </div>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Keyword</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Added</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          ${keywords.map(k => {
-            const hasArticle = articleSlugs.includes(k.slug);
-            return `
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-3">
-                <div class="text-sm font-medium text-gray-900">${escHtml(k.keyword)}</div>
-                <div class="text-xs text-gray-400">${k.slug}</div>
-              </td>
-              <td class="px-4 py-3">
-                <span class="text-xs px-2 py-0.5 rounded-full ${typeColor(k.type)}">${k.type}</span>
-              </td>
-              <td class="px-4 py-3 text-sm text-gray-600">${k.category}</td>
-              <td class="px-4 py-3">
-                ${hasArticle
-                  ? '<span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">Generated</span>'
-                  : '<span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">Pending</span>'}
-              </td>
-              <td class="px-4 py-3">
-                ${!hasArticle ? `
-                <form method="POST" action="/content/keywords/generate" class="inline">
-                  <input type="hidden" name="keyword" value="${escHtml(k.keyword)}" />
-                  <button type="submit" class="text-xs bg-brand-600 text-white px-3 py-1 rounded hover:bg-brand-700">Generate</button>
-                </form>
-                ` : `
-                <form method="POST" action="/content/keywords/generate" class="inline">
-                  <input type="hidden" name="keyword" value="${escHtml(k.keyword)}" />
-                  <input type="hidden" name="force" value="1" />
-                  <button type="submit" class="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300">Regenerate</button>
-                </form>
-                `}
-              </td>
-            </tr>
-            `;
-          }).join('')}
-          ${keywords.length === 0 ? '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">No keywords yet</td></tr>' : ''}
+          ${(() => {
+            let priority = 1;
+            return sorted.map(k => {
+              const hasArticle = articleSlugs.includes(k.slug);
+              const priorityNum = !hasArticle ? priority++ : null;
+              return `
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3 text-center">
+                  ${priorityNum ? `<span class="text-xs font-bold ${priorityNum <= 3 ? 'text-brand-600' : 'text-gray-400'}">#${priorityNum}</span>` : '<span class="text-xs text-gray-300">—</span>'}
+                </td>
+                <td class="px-4 py-3">
+                  <div class="text-sm font-medium text-gray-900">${escHtml(k.keyword)}</div>
+                  <div class="text-xs text-gray-400">${k.slug}</div>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-0.5 rounded-full ${typeColor(k.type)}">${k.type}</span>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">${k.category}</td>
+                <td class="px-4 py-3">
+                  ${hasArticle
+                    ? '<span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">Generated</span>'
+                    : '<span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">Pending</span>'}
+                </td>
+                <td class="px-4 py-3 text-xs text-gray-400">${k.dateAdded ? formatDate(k.dateAdded) : '—'}</td>
+              </tr>
+              `;
+            }).join('');
+          })()}
+          ${keywords.length === 0 ? '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No keywords yet</td></tr>' : ''}
         </tbody>
       </table>
     </div>

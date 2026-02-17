@@ -47,7 +47,7 @@ router.post('/content/keywords', (req, res) => {
   const { keyword, slug, type, category } = req.body;
   const newSlug = slug || keyword.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-  keywords.push({ type, keyword, slug: newSlug, category });
+  keywords.push({ type, keyword, slug: newSlug, category, dateAdded: new Date().toISOString().split('T')[0] });
   writeYaml(kwFile, keywords);
   res.redirect('/content?tab=keywords&msg=Keyword added: ' + encodeURIComponent(keyword));
 });

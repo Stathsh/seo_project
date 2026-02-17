@@ -204,12 +204,15 @@ async function main() {
     process.exit(1);
   }
 
-  // Deduplicate against existing keywords
+  // Deduplicate against existing keywords and stamp with dateAdded
+  const today = new Date().toISOString().split('T')[0];
   const existingSlugs = new Set(existingKeywords.map((k) => k.slug));
-  const dedupedKeywords = newKeywords.filter((k) => {
-    if (!k.slug || !k.keyword || !k.type) return false;
-    return !existingSlugs.has(k.slug);
-  });
+  const dedupedKeywords = newKeywords
+    .filter((k) => {
+      if (!k.slug || !k.keyword || !k.type) return false;
+      return !existingSlugs.has(k.slug);
+    })
+    .map((k) => ({ ...k, dateAdded: today }));
 
   const duplicates = newKeywords.length - dedupedKeywords.length;
 
