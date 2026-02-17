@@ -408,15 +408,35 @@ function engineTab(config, articles) {
 
     <!-- Activity & Status (always open) -->
     <div class="bg-white rounded-lg border border-gray-200 p-6 mb-3">
-      <h2 class="text-lg font-semibold text-gray-900 mb-1">Activity & Status</h2>
-      <p class="text-sm text-gray-500 mb-4">Recent content generation activity.</p>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900 mb-1">Activity & Status</h2>
+          <p class="text-sm text-gray-500">Recent content generation activity.</p>
+        </div>
+        <form method="POST" action="/content/autopublish/run" class="flex-shrink-0 ml-4">
+          <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors inline-flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Generate Now${schedule.enabled ? ` (${schedule.amount || 1} article${(schedule.amount || 1) !== 1 ? 's' : ''})` : ''}
+          </button>
+        </form>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div class="bg-gray-50 rounded-lg p-4">
           <p class="text-xs font-medium text-gray-500 uppercase mb-1">Last Article</p>
           ${lastArticle ? `
             <p class="text-sm font-semibold text-gray-900 truncate" title="${escHtml(lastArticle.title)}">${escHtml(lastArticle.title || lastArticle.filename)}</p>
             <p class="text-xs text-gray-400 mt-0.5">${formatDate(lastArticle.dateModified || lastArticle.modified)} &middot; ${relativeTime(lastArticle.dateModified || lastArticle.modified)}</p>
           ` : '<p class="text-sm text-gray-400">No articles yet</p>'}
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-xs font-medium text-gray-500 uppercase mb-1">Next Run</p>
+          ${schedule.enabled ? `
+            <p class="text-sm font-semibold text-gray-900">${nextRunTime(schedule.frequency)}</p>
+            <p class="text-xs text-gray-400 mt-0.5">${nextRunRelative(schedule.frequency)}</p>
+          ` : '<p class="text-sm text-gray-400">Autopublish off</p>'}
         </div>
         <div class="bg-gray-50 rounded-lg p-4">
           <p class="text-xs font-medium text-gray-500 uppercase mb-1">This Week</p>
@@ -679,6 +699,47 @@ function relativeTime(d) {
   if (diffHrs < 24) return `${diffHrs}h ago`;
   if (diffDays < 30) return `${diffDays}d ago`;
   return `${Math.floor(diffDays / 30)}mo ago`;
+}
+
+// GitHub Actions cron runs at 9 AM UTC daily
+function getNextRun(frequency) {
+  const now = new Date();
+  const next = new Date(now);
+  // Daily cron at 9 AM UTC
+  next.setUTCHours(9, 0, 0, 0);
+  if (frequency === 'hourly') {
+    // Next hour mark
+    next.setTime(now.getTime());
+    next.setUTCMinutes(0, 0, 0);
+    next.setUTCHours(next.getUTCHours() + 1);
+  } else if (frequency === 'weekly') {
+    // Next Monday 9 AM UTC
+    const day = next.getUTCDay();
+    const daysUntilMon = day === 0 ? 1 : day === 1 ? (now.getUTCHours() >= 9 ? 7 : 0) : 8 - day;
+    next.setUTCDate(next.getUTCDate() + daysUntilMon);
+  } else {
+    // Daily: if 9 AM UTC already passed today, next is tomorrow
+    if (now >= next) next.setUTCDate(next.getUTCDate() + 1);
+  }
+  return next;
+}
+
+function nextRunTime(frequency) {
+  const next = getNextRun(frequency);
+  return next.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+}
+
+function nextRunRelative(frequency) {
+  const next = getNextRun(frequency);
+  const diffMs = next.getTime() - Date.now();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHrs = Math.floor(diffMs / 3600000);
+  const remMins = diffMins % 60;
+  if (diffMins < 1) return 'any moment now';
+  if (diffMins < 60) return `in ${diffMins}m`;
+  if (diffHrs < 24) return `in ${diffHrs}h ${remMins > 0 ? remMins + 'm' : ''}`;
+  const diffDays = Math.floor(diffMs / 86400000);
+  return `in ${diffDays}d ${diffHrs % 24}h`;
 }
 
 function escHtml(str) {

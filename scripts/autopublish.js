@@ -48,12 +48,17 @@ function parseArgs() {
   let count = 1;
   let dryRun = false;
 
+  let force = false;
+
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--count' && args[i + 1]) {
       count = parseInt(args[i + 1], 10);
     }
     if (args[i] === '--dry-run') {
       dryRun = true;
+    }
+    if (args[i] === '--force') {
+      force = true;
     }
   }
 
@@ -63,7 +68,7 @@ function parseArgs() {
     count = schedule.articlesPerRun;
   }
 
-  return { count: Math.max(1, Math.min(count, 10)), dryRun };
+  return { count: Math.max(1, Math.min(count, 10)), dryRun, force };
 }
 
 // ─── Find pending keywords ──────────────────────────────────────
@@ -285,14 +290,14 @@ function buildFrontmatter(entry, products, faq, allEntries) {
 // ─── Main ───────────────────────────────────────────────────────
 
 async function main() {
-  const { count, dryRun } = parseArgs();
+  const { count, dryRun, force } = parseArgs();
 
   console.log('\n🤖 Autopublish');
   console.log('─'.repeat(50));
 
-  // Respect the dashboard schedule toggle
+  // Respect the dashboard schedule toggle (--force bypasses for manual triggers)
   const schedule = engineConfig.schedule || {};
-  if (!schedule.enabled && !dryRun) {
+  if (!schedule.enabled && !dryRun && !force) {
     console.log('Autopublish is disabled. Enable it in the dashboard under Content Engine → Publishing Schedule.');
     process.exit(0);
   }

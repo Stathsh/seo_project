@@ -191,6 +191,30 @@ router.post('/content/articles/:slug/delete', (req, res) => {
   res.redirect('/content?tab=articles&msg=' + encodeURIComponent(`Article "${slug}" deleted`));
 });
 
+// ─── Autopublish actions ─────────────────────────────────────
+
+router.post('/content/autopublish/run', (req, res) => {
+  const site = getActiveSite(null);
+  const engineFile = path.join(site.dataDir, 'content-engine.json');
+  const engineConfig = readJson(engineFile);
+  const count = engineConfig.schedule?.articlesPerRun || engineConfig.schedule?.amount || 1;
+
+  const env = { ...process.env };
+  if (!site.isLegacy) env.ACTIVE_SITE = site.id;
+
+  // --force bypasses the schedule.enabled check (manual override)
+  const child = spawn('node', ['scripts/autopublish.js', '--count', String(count), '--force'], { cwd: ROOT, env });
+  child.on('close', (code) => {
+    const msg = code === 0
+      ? `Article generation complete (${count} requested)`
+      : 'Article generation failed';
+    res.redirect('/content?tab=engine&msg=' + encodeURIComponent(msg));
+  });
+  child.on('error', () => {
+    res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Article generation failed to start'));
+  });
+});
+
 // ─── Trend Research actions ─────────────────────────────────
 
 router.post('/content/trend-research/run', (req, res) => {
