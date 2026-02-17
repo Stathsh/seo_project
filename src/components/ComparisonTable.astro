@@ -1,4 +1,6 @@
 ---
+import { getSiteConfig } from '../lib/site-config';
+
 interface Props {
   products: Array<{
     name: string;
@@ -7,11 +9,13 @@ interface Props {
     rating: number;
     specs: Record<string, string>;
     asin: string;
+    affiliateTag?: string;
   }>;
-  affiliateTag?: string;
 }
 
-const { products, affiliateTag = 'YOURTAG-20' } = Astro.props;
+const { products } = Astro.props;
+const siteConfig = getSiteConfig();
+const defaultTag = siteConfig.affiliateTag;
 
 // Gather all spec keys from all products
 const allSpecKeys = [...new Set(products.flatMap(p => Object.keys(p.specs)))];
@@ -72,7 +76,7 @@ const allSpecKeys = [...new Set(products.flatMap(p => Object.keys(p.specs)))];
           {products.map(product => (
             <td class="border border-gray-200 p-3 text-center">
               <a
-                href={`https://amazon.com/dp/${product.asin}?tag=${affiliateTag}`}
+                href={`https://amazon.com/dp/${product.asin}?tag=${product.affiliateTag || defaultTag}`}
                 target="_blank"
                 rel="nofollow noopener sponsored"
                 class="inline-block bg-accent-500 hover:bg-accent-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors text-xs"
