@@ -1,0 +1,40 @@
+{
+  "id": "techradar",
+  "name": "TechRadar",
+  "colors": {
+    "brand": {
+      "50": "#fdf2f8",
+      "100": "#fce7f3",
+      "200": "#fbcfe8",
+      "300": "#f9a8d4",
+      "400": "#f472b6",
+      "500": "#ec4899",
+      "600": "#db2777",
+      "700": "#be185d",
+      "800": "#9d174d",
+      "900": "#831843",
+      "950": "#500724"
+    },
+    "accent": {
+      "500": "#ff0066",
+      "600": "#e6005c"
+    }
+  },
+  "fonts": {
+    "googleUrl": "https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap",
+    "heading": {
+      "family": "Oswald",
+      "fallback": "Impact, Arial Narrow, sans-serif"
+    },
+    "body": {
+      "family": "Open Sans",
+      "fallback": "Helvetica Neue, Arial, sans-serif"
+    }
+  },
+  "layout": {
+    "style": "techradar",
+    "heroGradient": false,
+    "roundedCards": false,
+    "borderStyle": "subtle"
+  }
+}

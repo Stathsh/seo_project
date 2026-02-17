@@ -3,6 +3,9 @@
  * Each template contains colors, fonts, and layout metadata.
  */
 
+import fs from 'fs';
+import path from 'path';
+
 const templates = [
   {
     id: 'default',
@@ -74,6 +77,41 @@ const templates = [
       borderStyle: 'ruled',
     },
   },
+  {
+    id: 'techradar',
+    name: 'TechRadar',
+    description: 'Bold tech publication theme with a dark header/footer, magenta accent color, condensed sans-serif headlines, and a dense information-rich layout. Inspired by techradar.com.',
+    colors: {
+      brand: {
+        50: '#fdf2f8',
+        100: '#fce7f3',
+        200: '#fbcfe8',
+        300: '#f9a8d4',
+        400: '#f472b6',
+        500: '#ec4899',
+        600: '#db2777',
+        700: '#be185d',
+        800: '#9d174d',
+        900: '#831843',
+        950: '#500724',
+      },
+      accent: {
+        500: '#ff0066',
+        600: '#e6005c',
+      },
+    },
+    fonts: {
+      googleUrl: 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap',
+      heading: { family: 'Oswald', fallback: 'Impact, Arial Narrow, sans-serif' },
+      body: { family: 'Open Sans', fallback: 'Helvetica Neue, Arial, sans-serif' },
+    },
+    layout: {
+      style: 'techradar',
+      heroGradient: false,
+      roundedCards: false,
+      borderStyle: 'subtle',
+    },
+  },
 ];
 
 export function getAllTemplates() {
@@ -82,4 +120,19 @@ export function getAllTemplates() {
 
 export function getTemplateById(id) {
   return templates.find(t => t.id === id) || null;
+}
+
+/**
+ * Read the active template ID from a site's theme.json.
+ * Accepts the site's dataDir and walks up one level to find theme.json.
+ */
+export function getActiveTemplateId(dataDir) {
+  const themePath = path.join(dataDir, '..', 'theme.json');
+  try {
+    if (fs.existsSync(themePath)) {
+      const theme = JSON.parse(fs.readFileSync(themePath, 'utf-8'));
+      return theme.id || 'default';
+    }
+  } catch { /* ignore */ }
+  return 'default';
 }
