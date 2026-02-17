@@ -48,26 +48,15 @@ export function homePage({ articles, keywords, products, totalWords, siteName })
       </div>
     </div>
 
-    <!-- Pending keywords -->
+    <!-- Pending keywords summary -->
     <div class="bg-white rounded-lg border border-gray-200 p-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Pending Keywords (${pendingKeywords.length})</h2>
-      ${pendingKeywords.length > 0 ? `
-      <div class="space-y-2">
-        ${pendingKeywords.slice(0, 10).map(k => `
-          <div class="flex items-center justify-between py-2 border-b border-gray-100">
-            <div>
-              <span class="text-sm font-medium text-gray-900">${k.keyword}</span>
-              <span class="ml-2 text-xs px-2 py-0.5 rounded-full ${typeColor(k.type)}">${k.type}</span>
-            </div>
-            <form method="POST" action="/content/keywords/generate" class="inline">
-              <input type="hidden" name="keyword" value="${k.keyword}" />
-              <button type="submit" class="text-xs bg-brand-600 text-white px-3 py-1 rounded hover:bg-brand-700">Generate</button>
-            </form>
-          </div>
-        `).join('')}
-        ${pendingKeywords.length > 10 ? `<p class="text-sm text-gray-400 pt-2">+ ${pendingKeywords.length - 10} more</p>` : ''}
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900">Pending Keywords</h2>
+        <a href="/content?tab=keywords" class="text-sm text-brand-600 font-medium hover:text-brand-700">View all &rarr;</a>
       </div>
-      ` : '<p class="text-sm text-gray-400">All keywords have articles generated</p>'}
+      ${pendingKeywords.length > 0 ? `
+        <p class="text-sm text-gray-500 mt-2">${pendingKeywords.length} keyword${pendingKeywords.length !== 1 ? 's' : ''} waiting for article generation.</p>
+      ` : '<p class="text-sm text-gray-400 mt-2">All keywords have articles generated</p>'}
     </div>
   `;
 }

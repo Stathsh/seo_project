@@ -154,15 +154,47 @@ function articlesTab(articles) {
 // ─── Keywords tab ───────────────────────────────────────────
 
 function keywordsTab(keywords, articleSlugs) {
+  const pending = keywords.filter(k => !articleSlugs.includes(k.slug));
+  const generated = keywords.filter(k => articleSlugs.includes(k.slug));
+
   return `
-    <div class="flex items-center justify-between mb-4">
-      <div></div>
-      <form method="POST" action="/content/keywords/generate-all">
-        <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700">
-          Generate All Pending
-        </button>
-      </form>
+    <!-- Pending Keywords -->
+    ${pending.length > 0 ? `
+    <div class="bg-amber-50 rounded-lg border border-amber-200 p-5 mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-base font-semibold text-amber-900">
+          <svg class="w-4 h-4 inline-block mr-1 -mt-0.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          ${pending.length} Pending Keyword${pending.length !== 1 ? 's' : ''}
+        </h2>
+        <form method="POST" action="/content/keywords/generate-all">
+          <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700">
+            Generate All Pending
+          </button>
+        </form>
+      </div>
+      <div class="space-y-2">
+        ${pending.map(k => `
+          <div class="flex items-center justify-between py-2 border-b border-amber-200/50 last:border-0">
+            <div>
+              <span class="text-sm font-medium text-gray-900">${escHtml(k.keyword)}</span>
+              <span class="ml-2 text-xs px-2 py-0.5 rounded-full ${typeColor(k.type)}">${k.type}</span>
+              <span class="ml-1 text-xs text-gray-400">${k.category}</span>
+            </div>
+            <form method="POST" action="/content/keywords/generate" class="inline">
+              <input type="hidden" name="keyword" value="${escHtml(k.keyword)}" />
+              <button type="submit" class="text-xs bg-brand-600 text-white px-3 py-1 rounded hover:bg-brand-700">Generate</button>
+            </form>
+          </div>
+        `).join('')}
+      </div>
     </div>
+    ` : `
+    <div class="bg-green-50 rounded-lg border border-green-200 p-4 mb-6">
+      <p class="text-sm text-green-700 font-medium">All keywords have articles generated.</p>
+    </div>
+    `}
 
     <!-- Add keyword form -->
     <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
