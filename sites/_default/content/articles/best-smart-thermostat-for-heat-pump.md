@@ -40,7 +40,7 @@ products:
     price: 279.99
     rating: 4.4
     reviewCount: 3200
-    asin: B0CWDH86MK
+    asin: B0D5BBYRJM
     affiliateTag: smarthomepi0f-22
     specs:
       display: "2.7\" borderless LCD"

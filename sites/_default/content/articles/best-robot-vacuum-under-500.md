@@ -18,7 +18,7 @@ products:
     price: 799.99
     rating: 4.5
     reviewCount: 3400
-    asin: "B0CXJV1K3V"
+    asin: "B0CZH7B4QX"
     affiliateTag: "smarthomepi0f-22"
     badge: "Worth the Splurge"
     specs:
@@ -115,7 +115,7 @@ For homes under 1,500 square feet, battery life in the $300-500 range is perfect
 
 ## Roborock Q Revo MaxV — Worth the Splurge
 
-**Price:** $799.99 (frequently on sale for $500-650) | **Rating:** 4.5/5 (3,400+ reviews) | **ASIN:** B0CXJV1K3V
+**Price:** $799.99 (frequently on sale for $500-650) | **Rating:** 4.5/5 (3,400+ reviews) | **ASIN:** B0CZH7B4QX
 
 We include the Q Revo MaxV as our "Worth the Splurge" pick because it represents the benchmark against which every budget robot should be measured — and because patient shoppers can frequently buy it within the $500 budget.
 

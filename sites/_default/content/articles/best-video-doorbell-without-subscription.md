@@ -15,7 +15,7 @@ products:
     rating: 4.3
     reviewCount: 4800
     badge: "Best Free Tier"
-    asin: B0CWDMH2FQ
+    asin: B0BBSLG6PC
     affiliateTag: smarthomepi0f-22
     specs:
       resolution: "1600x1200 HDR"

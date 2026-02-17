@@ -18,7 +18,7 @@ products:
     price: 799.99
     rating: 4.5
     reviewCount: 3400
-    asin: "B0CXJV1K3V"
+    asin: "B0CZH7B4QX"
     affiliateTag: "smarthomepi0f-22"
     badge: "Our Top Pick"
     specs:
@@ -106,7 +106,7 @@ For households with pet allergy sufferers, the vacuum's filtration matters as mu
 
 ## Roborock Q Revo MaxV — Our Top Pick
 
-**Price:** $799.99 | **Rating:** 4.5/5 (3,400+ reviews) | **ASIN:** B0CXJV1K3V
+**Price:** $799.99 | **Rating:** 4.5/5 (3,400+ reviews) | **ASIN:** B0CZH7B4QX
 
 The Q Revo MaxV is Roborock's premium all-in-one robot that vacuums, mops, self-empties, and self-washes. It is a large unit — the robot itself is about 13.5 inches in diameter and 4 inches tall, and the dock is roughly the size of a small kitchen trash can. But what it delivers in cleaning performance for pet homes justifies every inch of space it occupies.
 

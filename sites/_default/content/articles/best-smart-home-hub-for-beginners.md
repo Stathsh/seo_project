@@ -18,7 +18,7 @@ products:
     price: 59.99
     rating: 4.1
     reviewCount: 2100
-    asin: "B0BWTWT8XF"
+    asin: "B0BRNWMVDX"
     affiliateTag: "smarthomepi0f-22"
     badge: "Our Top Pick"
     specs:
@@ -113,7 +113,7 @@ Your hub choice today determines what devices you can add over the next several 
 
 ## Samsung SmartThings Station — Our Top Pick
 
-**Price:** $59.99 | **Rating:** 4.1/5 (2,100+ reviews) | **ASIN:** B0BWTWT8XF
+**Price:** $59.99 | **Rating:** 4.1/5 (2,100+ reviews) | **ASIN:** B0BRNWMVDX
 
 The SmartThings Station is a flat, circular device about the size of a coaster. It sits on a desk, nightstand, or shelf, and its top surface doubles as a 15W Qi2 wireless charger for your phone. There are no speakers and no display — it is a hub that does its job quietly in the background.
 

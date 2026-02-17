@@ -43,7 +43,7 @@ products:
     price: 179.99
     rating: 4.3
     reviewCount: 9800
-    asin: B09FGL9YDX
+    asin: B09FCMSJZG
     affiliateTag: smarthomepi0f-22
     specs:
       resolution: "1080p HDR"

@@ -17,7 +17,7 @@ products:
     price: 12.99
     rating: 4.6
     reviewCount: 32000
-    asin: "B0BWRDX3KB"
+    asin: "B0B14C719T"
     affiliateTag: "smarthomepi0f-22"
     badge: "Our Top Pick"
     specs:
@@ -88,7 +88,7 @@ Some smart plugs require a separate hub to function. The EP25 connects directly 
 
 ## TP-Link Kasa Smart Plug EP25 — Our Top Pick
 
-**Price:** $12.99 | **Rating:** 4.6/5 (32,000+ reviews) | **ASIN:** B0BWRDX3KB
+**Price:** $12.99 | **Rating:** 4.6/5 (32,000+ reviews) | **ASIN:** B0B14C719T
 
 The Kasa EP25 looks like a slightly oversized wall plug adapter. It is white, rounded, and compact enough that it genuinely does not block the second outlet in a standard duplex receptacle. There is no physical on/off button — control is entirely through the app, voice assistants, or automations. It connects via 2.4GHz Wi-Fi and requires no hub.
 

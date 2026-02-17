@@ -17,6 +17,52 @@ faq:
     answer: "A dual zone smart thermostat can reduce your heating bills by 10-25% by allowing you to heat only occupied areas and maintain different temperatures in each zone. The best smart thermostats for dual zone heating optimize energy usage by learning your schedule and automatically adjusting temperatures when rooms are unoccupied."
   - question: "Do dual zone smart thermostats work with all HVAC systems?"
     answer: "Most dual zone smart thermostats are compatible with standard HVAC systems, but compatibility depends on your specific setup and wiring configuration. Before purchasing the best smart thermostat for dual zone heating, check the manufacturer's compatibility tool or consult with an HVAC professional to ensure it will work with your current system and ductwork."
+products:
+  - id: "ecobee-enhanced"
+    name: "ecobee Smart Thermostat Enhanced"
+    brand: "ecobee"
+    price: 189.99
+    rating: 4.6
+    reviewCount: 12400
+    asin: "B09XXTQPXC"
+    affiliateTag: "smarthomepi0f-22"
+    badge: "Our Top Pick"
+    specs:
+      sensors: "Supports up to 32 SmartSensors"
+      compatibility: "Works with most 24V HVAC systems"
+      display: "3.5-inch touchscreen"
+      voiceAssistant: "Alexa, Google, Siri"
+    pros:
+      - "Best-in-class multi-zone sensor support (up to 32)"
+      - "Advanced wire compatibility handles complex HVAC setups"
+      - "SmartSensor accuracy within 0.5°F with occupancy detection"
+      - "Per-zone energy reporting helps identify waste"
+    cons:
+      - "Higher price point at around $250 with sensors"
+      - "SmartSensors sold separately beyond the included one"
+      - "Touchscreen can be sluggish in cold conditions"
+  - id: "honeywell-t9"
+    name: "Honeywell Home T9 Smart Thermostat"
+    brand: "Honeywell"
+    price: 169.99
+    rating: 4.4
+    reviewCount: 8900
+    asin: "B07N849J21"
+    affiliateTag: "smarthomepi0f-22"
+    specs:
+      sensors: "Supports up to 20 room sensors"
+      compatibility: "Standard dual zone HVAC systems"
+      display: "Touchscreen color display"
+      voiceAssistant: "Alexa, Google Assistant"
+    pros:
+      - "Excellent geofencing with zone-specific pre-heating"
+      - "Great sensor battery life (2+ years)"
+      - "Clean app interface with zone-by-zone controls"
+      - "More affordable than premium competitors"
+    cons:
+      - "Requires C-wire for dual zone installations"
+      - "Struggles with some heat pump configurations"
+      - "Customer support can be inconsistent"
 relatedSlugs:
   - "best-smart-thermostat-for-energy-savings"
   - "best-smart-thermostat-for-heat-pump"
