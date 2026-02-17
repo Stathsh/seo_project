@@ -12,11 +12,8 @@ import express from 'express';
 import { sessionMiddleware, requireAuth } from './lib/auth.js';
 import authRoutes from './routes/auth.js';
 import indexRoutes from './routes/index.js';
-import articlesRoutes from './routes/articles.js';
-import keywordsRoutes from './routes/keywords.js';
-import productsRoutes from './routes/products.js';
+import contentRoutes from './routes/content.js';
 import sitesRoutes from './routes/sites.js';
-import buildRoutes from './routes/build.js';
 import templatesRoutes from './routes/templates.js';
 
 const app = express();
@@ -33,11 +30,8 @@ app.use(requireAuth);
 // Routes
 app.use(authRoutes);
 app.use(indexRoutes);
-app.use(articlesRoutes);
-app.use(keywordsRoutes);
-app.use(productsRoutes);
+app.use(contentRoutes);
 app.use(sitesRoutes);
-app.use(buildRoutes);
 app.use(templatesRoutes);
 
 // Start server

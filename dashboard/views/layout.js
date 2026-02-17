@@ -5,12 +5,9 @@
 export function layout(title, content, { activePage = '', siteName = '', sites = [] } = {}) {
   const nav = [
     { label: 'Overview', href: '/', id: 'home' },
-    { label: 'Articles', href: '/articles', id: 'articles' },
-    { label: 'Keywords', href: '/keywords', id: 'keywords' },
-    { label: 'Products', href: '/products', id: 'products' },
+    { label: 'Content', href: '/content', id: 'content' },
     { label: 'Sites', href: '/sites', id: 'sites' },
     { label: 'Templates', href: '/templates', id: 'templates' },
-    { label: 'Build', href: '/build', id: 'build' },
   ];
 
   const siteOptions = sites.map(s =>
