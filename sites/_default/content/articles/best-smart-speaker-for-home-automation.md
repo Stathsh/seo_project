@@ -36,7 +36,7 @@ products:
     price: 99.99
     rating: 4.6
     reviewCount: 18000
-    asin: "B09JCMX8K8"
+    asin: "B09418W7M2"
     affiliateTag: "smarthomepi0f-22"
     specs:
       speaker: "Full-range driver + dual passive radiators"

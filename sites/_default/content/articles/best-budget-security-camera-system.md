@@ -13,7 +13,7 @@ products:
     price: 35.98
     rating: 4.3
     reviewCount: 28900
-    asin: "B09XK22VPQ"
+    asin: "B08R59YH7W"
     affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1080p HD"
@@ -38,7 +38,7 @@ products:
     price: 29.99
     rating: 4.2
     reviewCount: 8750
-    asin: "B0BWX32MFM"
+    asin: "B0BWWZXWPL"
     affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1080p HD"
@@ -62,7 +62,7 @@ products:
     price: 59.99
     rating: 4.5
     reviewCount: 12450
-    asin: "B0B6GKJP3D"
+    asin: "B0B6GLQJMV"
     affiliateTag: "smarthomepi0f-22"
     specs:
       resolution: "1080p HD"

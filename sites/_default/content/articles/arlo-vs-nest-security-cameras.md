@@ -17,7 +17,7 @@ products:
     price: 249.99
     rating: 4.4
     reviewCount: 6200
-    asin: B0BZWMKJDW
+    asin: B0BL2262ML
     affiliateTag: smarthomepi0f-22
     specs:
       resolution: "2K HDR"
