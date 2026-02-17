@@ -1,4 +1,4 @@
-export function contentPage({ articles, keywords, products, engineConfig = {}, activeTab = 'articles', message }) {
+export function contentPage({ articles, keywords, products, engineConfig = {}, activeTab = 'articles', message, apiUsage = {} }) {
   const articleSlugs = articles.map(a => a.slug);
 
   const tabs = [
@@ -61,7 +61,7 @@ export function contentPage({ articles, keywords, products, engineConfig = {}, a
 
     <!-- Content Engine Tab -->
     <div id="tab-engine" class="tab-panel ${activeTab !== 'engine' ? 'hidden' : ''}">
-      ${engineTab(engineConfig)}
+      ${engineTab(engineConfig, articles, apiUsage)}
     </div>
 
     <script>
@@ -127,14 +127,19 @@ function articlesTab(articles) {
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Words</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          ${sorted.map(a => `
+          ${sorted.map(a => {
+            const articleSlug = encodeURIComponent(a.slug || a.filename.replace('.md', ''));
+            return `
             <tr class="hover:bg-gray-50">
               <td class="px-4 py-3">
-                <div class="text-sm font-medium text-gray-900">${escHtml(a.title || a.filename)}</div>
-                <div class="text-xs text-gray-400">${a.slug || a.filename}</div>
+                <a href="/content/articles/${articleSlug}/edit" class="block group">
+                  <div class="text-sm font-medium text-gray-900 group-hover:text-brand-700">${escHtml(a.title || a.filename)}</div>
+                  <div class="text-xs text-gray-400">${a.slug || a.filename}</div>
+                </a>
               </td>
               <td class="px-4 py-3">
                 <span class="text-xs px-2 py-0.5 rounded-full ${typeColor(a.type)}">${a.type || '—'}</span>
@@ -142,9 +147,23 @@ function articlesTab(articles) {
               <td class="px-4 py-3 text-sm text-gray-600">${a.category || '—'}</td>
               <td class="px-4 py-3 text-sm text-gray-600">${a.wordCount?.toLocaleString() || '—'}</td>
               <td class="px-4 py-3 text-sm text-gray-500">${formatDate(a.dateModified || a.modified)}</td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-1">
+                  <a href="/content/articles/${articleSlug}/edit"
+                    class="text-xs bg-brand-50 text-brand-700 px-2 py-1 rounded hover:bg-brand-100 transition-colors">Edit</a>
+                  <form method="POST" action="/content/articles/${articleSlug}/archive" class="inline">
+                    <button type="submit" class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded hover:bg-gray-200 transition-colors">Archive</button>
+                  </form>
+                  <form method="POST" action="/content/articles/${articleSlug}/delete" class="inline"
+                    onsubmit="return confirm('Are you sure you want to delete this article? This cannot be undone.')">
+                    <button type="submit" class="text-xs bg-red-50 text-red-600 px-2 py-1 rounded hover:bg-red-100 transition-colors">Delete</button>
+                  </form>
+                </div>
+              </td>
             </tr>
-          `).join('')}
-          ${sorted.length === 0 ? '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">No articles yet</td></tr>' : ''}
+            `;
+          }).join('')}
+          ${sorted.length === 0 ? '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No articles yet</td></tr>' : ''}
         </tbody>
       </table>
     </div>
@@ -339,13 +358,35 @@ function productsTab(products) {
 
 // ─── Content Engine tab ─────────────────────────────────────
 
-function engineTab(config) {
+function engineTab(config, articles, apiUsage) {
   const model = config.model || 'claude-sonnet-4-20250514';
   const maxTokens = config.maxTokens || 4096;
   const faqMaxTokens = config.faqMaxTokens || 1500;
   const hasApiKey = !!(config.apiKey);
   const schedule = config.schedule || {};
   const prompts = config.prompts || {};
+  const trendResearch = config.trendResearch || {};
+  const calls = (apiUsage && Array.isArray(apiUsage.calls)) ? apiUsage.calls : [];
+
+  // --- Activity stats ---
+  const sorted = [...articles].sort((a, b) =>
+    new Date(b.dateModified || b.modified).getTime() - new Date(a.dateModified || a.modified).getTime()
+  );
+  const lastArticle = sorted[0] || null;
+  const now = new Date();
+  const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+  const monthAgo = new Date(now); monthAgo.setDate(monthAgo.getDate() - 30);
+  const thisWeekCount = articles.filter(a => {
+    const d = new Date(a.datePublished || a.dateModified || a.modified);
+    return d >= weekAgo;
+  }).length;
+  const thisMonthCount = articles.filter(a => {
+    const d = new Date(a.datePublished || a.dateModified || a.modified);
+    return d >= monthAgo;
+  }).length;
+
+  // --- API usage stats ---
+  const usageStats = computeUsageStats(calls);
 
   const models = [
     { value: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4 (Recommended)' },
@@ -362,6 +403,119 @@ function engineTab(config) {
   ];
 
   return `
+    <!-- Activity & Status -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-1">Activity & Status</h2>
+      <p class="text-sm text-gray-500 mb-4">Recent content generation activity.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-xs font-medium text-gray-500 uppercase mb-1">Last Article</p>
+          ${lastArticle ? `
+            <p class="text-sm font-semibold text-gray-900 truncate" title="${escHtml(lastArticle.title)}">${escHtml(lastArticle.title || lastArticle.filename)}</p>
+            <p class="text-xs text-gray-400 mt-0.5">${formatDate(lastArticle.dateModified || lastArticle.modified)} &middot; ${relativeTime(lastArticle.dateModified || lastArticle.modified)}</p>
+          ` : '<p class="text-sm text-gray-400">No articles yet</p>'}
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-xs font-medium text-gray-500 uppercase mb-1">This Week</p>
+          <p class="text-2xl font-bold text-brand-600">${thisWeekCount}</p>
+          <p class="text-xs text-gray-400">articles published</p>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-xs font-medium text-gray-500 uppercase mb-1">This Month</p>
+          <p class="text-2xl font-bold text-brand-600">${thisMonthCount}</p>
+          <p class="text-xs text-gray-400">articles published</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trend Research -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-lg font-semibold text-gray-900">Trend Research</h2>
+        <form method="POST" action="/content/trend-research/run" class="inline">
+          <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors">
+            Run Trend Research
+          </button>
+        </form>
+      </div>
+      <p class="text-sm text-gray-500 mb-4">
+        Run AI-powered trend analysis to discover new keyword opportunities.
+        ${trendResearch.lastRunDate
+          ? `Last run: ${formatDate(trendResearch.lastRunDate)} (${relativeTime(trendResearch.lastRunDate)})`
+          : 'Never run from dashboard.'}
+      </p>
+
+      <form method="POST" action="/content/engine/trend-prompt">
+        <label class="block text-sm font-medium text-gray-700 mb-1">System Prompt</label>
+        <p class="text-xs text-gray-400 mb-2">The system prompt sent to Claude when generating trend keywords.</p>
+        <textarea name="trendSystemPrompt" rows="6"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono leading-relaxed focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+        >${escHtml(trendResearch.systemPrompt || '')}</textarea>
+        <div class="flex justify-end mt-2">
+          <button type="submit" class="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+            Save Trend Prompt
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- API Usage -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-1">API Usage</h2>
+      <p class="text-sm text-gray-500 mb-4">Token usage and estimated costs for Claude API calls.</p>
+
+      ${calls.length > 0 ? `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs font-medium text-gray-500 uppercase">Total Calls</p>
+            <p class="text-xl font-bold text-gray-900">${calls.length.toLocaleString()}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs font-medium text-gray-500 uppercase">Input Tokens</p>
+            <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').inputTokens.toLocaleString()}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs font-medium text-gray-500 uppercase">Output Tokens</p>
+            <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').outputTokens.toLocaleString()}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-xs font-medium text-gray-500 uppercase">Est. Cost</p>
+            <p class="text-xl font-bold text-green-600">$${usageStats.find(s => s.label === 'All Time').cost.toFixed(2)}</p>
+          </div>
+        </div>
+
+        <div class="overflow-hidden rounded-lg border border-gray-200">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Period</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calls</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Input</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Output</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              ${usageStats.map(s => `
+                <tr>
+                  <td class="px-4 py-2 font-medium text-gray-700">${s.label}</td>
+                  <td class="px-4 py-2 text-gray-600">${s.calls.toLocaleString()}</td>
+                  <td class="px-4 py-2 text-gray-600">${s.inputTokens.toLocaleString()}</td>
+                  <td class="px-4 py-2 text-gray-600">${s.outputTokens.toLocaleString()}</td>
+                  <td class="px-4 py-2 text-gray-600">$${s.cost.toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : `
+        <div class="bg-gray-50 rounded-lg p-6 text-center">
+          <p class="text-sm text-gray-400">No usage data yet. API usage will be tracked when articles are generated.</p>
+        </div>
+      `}
+    </div>
+
     <form method="POST" action="/content/engine">
 
       <!-- AI Model Settings -->
@@ -481,6 +635,58 @@ function formatDate(d) {
   try {
     return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   } catch { return '—'; }
+}
+
+function relativeTime(d) {
+  if (!d) return '';
+  const now = Date.now();
+  const then = new Date(d).getTime();
+  const diffMs = now - then;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHrs = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHrs < 24) return `${diffHrs}h ago`;
+  if (diffDays < 30) return `${diffDays}d ago`;
+  return `${Math.floor(diffDays / 30)}mo ago`;
+}
+
+const MODEL_PRICING = {
+  'claude-sonnet-4-20250514': { input: 3.0, output: 15.0 },
+  'claude-opus-4-20250514': { input: 15.0, output: 75.0 },
+  'claude-haiku-3-5-20241022': { input: 0.80, output: 4.0 },
+};
+
+function estimateCost(calls) {
+  let total = 0;
+  for (const c of calls) {
+    const pricing = MODEL_PRICING[c.model] || MODEL_PRICING['claude-sonnet-4-20250514'];
+    total += ((c.inputTokens || 0) / 1_000_000) * pricing.input;
+    total += ((c.outputTokens || 0) / 1_000_000) * pricing.output;
+  }
+  return total;
+}
+
+function computeUsageStats(calls) {
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const weekStart = new Date(todayStart); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const periods = [
+    { label: 'Today', start: todayStart },
+    { label: 'This Week', start: weekStart },
+    { label: 'This Month', start: monthStart },
+    { label: 'All Time', start: new Date(0) },
+  ];
+
+  return periods.map(p => {
+    const filtered = calls.filter(c => new Date(c.timestamp) >= p.start);
+    const inputTokens = filtered.reduce((s, c) => s + (c.inputTokens || 0), 0);
+    const outputTokens = filtered.reduce((s, c) => s + (c.outputTokens || 0), 0);
+    return { label: p.label, calls: filtered.length, inputTokens, outputTokens, cost: estimateCost(filtered) };
+  });
 }
 
 function escHtml(str) {

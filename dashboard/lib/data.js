@@ -27,6 +27,25 @@ export function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+export function readArticle(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
+  let frontmatter = {};
+  let body = raw;
+  if (fmMatch) {
+    try { frontmatter = yaml.load(fmMatch[1]) || {}; } catch {}
+    body = raw.replace(/^---\n[\s\S]*?\n---\n*/, '');
+  }
+  return { frontmatter, body };
+}
+
+export function writeArticle(filePath, frontmatter, body) {
+  const yamlFm = yaml.dump(frontmatter, { lineWidth: -1, quotingType: '"', forceQuotes: true });
+  const content = `---\n${yamlFm}---\n\n${body}\n`;
+  fs.writeFileSync(filePath, content, 'utf-8');
+}
+
 export function listMarkdownFiles(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)

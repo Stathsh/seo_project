@@ -26,6 +26,7 @@ const KEYWORDS_FILE = path.join(site.dataDir, 'keywords.yaml');
 const PRODUCTS_FILE = path.join(site.dataDir, 'products.json');
 const ENGINE_FILE = path.join(site.dataDir, 'content-engine.json');
 const ARTICLES_DIR = site.contentDir;
+const USAGE_FILE = path.join(site.dataDir, 'api-usage.json');
 
 // ─── Load content engine config ─────────────────────────────
 
@@ -326,6 +327,7 @@ async function main() {
         maxTokens: engineConfig.maxTokens || 4096,
         model: aiModel,
         apiKey: aiKey,
+        usageFile: USAGE_FILE,
       });
 
       // Step 2: Generate FAQ
@@ -338,6 +340,7 @@ async function main() {
           maxTokens: engineConfig.faqMaxTokens || 1500,
           model: aiModel,
           apiKey: aiKey,
+          usageFile: USAGE_FILE,
         });
         const jsonMatch = faqRaw.match(/\[[\s\S]*\]/);
         if (jsonMatch) faq = JSON.parse(jsonMatch[0]);

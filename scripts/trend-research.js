@@ -26,6 +26,8 @@ const site = resolveSite();
 const KEYWORDS_FILE = path.join(site.dataDir, 'keywords.yaml');
 const PRODUCTS_FILE = path.join(site.dataDir, 'products.json');
 const CATEGORIES_FILE = path.join(site.dataDir, 'categories.json');
+const ENGINE_FILE = path.join(site.dataDir, 'content-engine.json');
+const USAGE_FILE = path.join(site.dataDir, 'api-usage.json');
 
 // ─── Parse CLI args ─────────────────────────────────────────────
 
@@ -144,7 +146,13 @@ async function main() {
   if (topic) console.log(`Focus topic: "${topic}"`);
   console.log('');
 
-  const system = `You are an expert SEO keyword researcher specializing in smart home and consumer electronics. You generate practical, search-optimized keyword ideas that real people search for. Always return valid YAML.`;
+  // Load configurable system prompt from content-engine.json
+  let engineConfig = {};
+  if (fs.existsSync(ENGINE_FILE)) {
+    try { engineConfig = JSON.parse(fs.readFileSync(ENGINE_FILE, 'utf-8')); } catch {}
+  }
+  const system = engineConfig.trendResearch?.systemPrompt ||
+    `You are an expert SEO keyword researcher specializing in smart home and consumer electronics. You generate practical, search-optimized keyword ideas that real people search for. Always return valid YAML.`;
 
   const prompt = buildResearchPrompt(existingKeywords, products, categories, topic, count);
 
@@ -154,6 +162,9 @@ async function main() {
     system,
     prompt,
     maxTokens: 4000,
+    model: engineConfig.model || undefined,
+    apiKey: engineConfig.apiKey || undefined,
+    usageFile: USAGE_FILE,
   });
 
   // Parse the YAML result — handle cases where Claude adds preamble text

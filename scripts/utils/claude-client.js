@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -9,7 +10,7 @@ const DEFAULT_MODEL = 'claude-sonnet-4-20250514';
  * Call Claude API with a system prompt and user message.
  * Returns the text content of the response.
  */
-export async function callClaude({ system, prompt, maxTokens = 4096, model, apiKey }) {
+export async function callClaude({ system, prompt, maxTokens = 4096, model, apiKey, usageFile }) {
   const resolvedKey = apiKey || process.env.ANTHROPIC_API_KEY;
   if (!resolvedKey) {
     throw new Error(
@@ -18,13 +19,23 @@ export async function callClaude({ system, prompt, maxTokens = 4096, model, apiK
   }
 
   const client = new Anthropic({ apiKey: resolvedKey });
+  const usedModel = model || DEFAULT_MODEL;
 
   const response = await client.messages.create({
-    model: model || DEFAULT_MODEL,
+    model: usedModel,
     max_tokens: maxTokens,
     system,
     messages: [{ role: 'user', content: prompt }],
   });
+
+  if (usageFile && response.usage) {
+    trackUsage(usageFile, {
+      timestamp: new Date().toISOString(),
+      model: usedModel,
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
+    });
+  }
 
   const textBlock = response.content.find((block) => block.type === 'text');
   if (!textBlock) {
@@ -32,6 +43,20 @@ export async function callClaude({ system, prompt, maxTokens = 4096, model, apiK
   }
 
   return textBlock.text;
+}
+
+function trackUsage(usageFile, record) {
+  try {
+    let data = { calls: [] };
+    if (fs.existsSync(usageFile)) {
+      data = JSON.parse(fs.readFileSync(usageFile, 'utf-8'));
+      if (!Array.isArray(data.calls)) data.calls = [];
+    }
+    data.calls.push(record);
+    fs.writeFileSync(usageFile, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (e) {
+    console.warn('Failed to track API usage:', e.message);
+  }
 }
 
 /**

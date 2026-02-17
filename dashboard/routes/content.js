@@ -1,10 +1,12 @@
 import { Router } from 'express';
+import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
-import { readYaml, writeYaml, readJson, writeJson, listMarkdownFiles } from '../lib/data.js';
+import { readYaml, writeYaml, readJson, writeJson, listMarkdownFiles, readArticle, writeArticle } from '../lib/data.js';
 import { getActiveSite, getAllSites, ROOT } from '../lib/site-manager.js';
 import { layout } from '../views/layout.js';
 import { contentPage } from '../views/content.js';
+import { articleEditPage } from '../views/article-edit.js';
 
 const router = Router();
 
@@ -18,10 +20,11 @@ router.get('/content', (req, res) => {
   const productsData = readJson(path.join(site.dataDir, 'products.json'));
   const products = productsData.products || [];
   const engineConfig = readJson(path.join(site.dataDir, 'content-engine.json'));
+  const apiUsage = readJson(path.join(site.dataDir, 'api-usage.json'));
   const activeTab = req.query.tab || 'articles';
   const message = req.query.msg || null;
 
-  const content = contentPage({ articles, keywords, products, engineConfig, activeTab, message });
+  const content = contentPage({ articles, keywords, products, engineConfig, activeTab, message, apiUsage });
   res.send(layout('Content', content, {
     activePage: 'content',
     siteName: site.config.name,
@@ -106,6 +109,122 @@ router.post('/content/products', (req, res) => {
 
   writeJson(prodFile, productsData);
   res.redirect('/content?tab=products&msg=Product added: ' + encodeURIComponent(name));
+});
+
+// ─── Article actions ────────────────────────────────────────
+
+router.get('/content/articles/:slug/edit', (req, res) => {
+  const site = getActiveSite(null);
+  const sites = getAllSites();
+  const slug = req.params.slug;
+  const filePath = path.join(site.contentDir, `${slug}.md`);
+  const article = readArticle(filePath);
+
+  if (!article) {
+    return res.redirect('/content?tab=articles&msg=' + encodeURIComponent('Article not found'));
+  }
+
+  const categoriesData = readJson(path.join(site.dataDir, 'categories.json'));
+  const categories = categoriesData.categories || [];
+  const message = req.query.msg || null;
+
+  const content = articleEditPage({ article, slug, categories, message });
+  res.send(layout('Edit Article', content, {
+    activePage: 'content',
+    siteName: site.config.name,
+    sites,
+  }));
+});
+
+router.post('/content/articles/:slug/edit', (req, res) => {
+  const site = getActiveSite(null);
+  const slug = req.params.slug;
+  const filePath = path.join(site.contentDir, `${slug}.md`);
+  const existing = readArticle(filePath);
+
+  if (!existing) {
+    return res.redirect('/content?tab=articles&msg=' + encodeURIComponent('Article not found'));
+  }
+
+  const updatedFm = {
+    ...existing.frontmatter,
+    title: req.body.title || existing.frontmatter.title,
+    description: req.body.description || existing.frontmatter.description,
+    type: req.body.type || existing.frontmatter.type,
+    category: req.body.category || existing.frontmatter.category,
+    dateModified: new Date().toISOString().split('T')[0],
+  };
+
+  const updatedBody = req.body.body !== undefined ? req.body.body : existing.body;
+
+  writeArticle(filePath, updatedFm, updatedBody);
+  res.redirect(`/content/articles/${encodeURIComponent(slug)}/edit?msg=` + encodeURIComponent('Article saved'));
+});
+
+router.post('/content/articles/:slug/archive', (req, res) => {
+  const site = getActiveSite(null);
+  const slug = req.params.slug;
+  const filePath = path.join(site.contentDir, `${slug}.md`);
+
+  if (!fs.existsSync(filePath)) {
+    return res.redirect('/content?tab=articles&msg=' + encodeURIComponent('Article not found'));
+  }
+
+  const archiveDir = path.join(site.contentDir, 'archived');
+  if (!fs.existsSync(archiveDir)) {
+    fs.mkdirSync(archiveDir, { recursive: true });
+  }
+
+  fs.renameSync(filePath, path.join(archiveDir, `${slug}.md`));
+  res.redirect('/content?tab=articles&msg=' + encodeURIComponent(`Article "${slug}" archived`));
+});
+
+router.post('/content/articles/:slug/delete', (req, res) => {
+  const site = getActiveSite(null);
+  const slug = req.params.slug;
+  const filePath = path.join(site.contentDir, `${slug}.md`);
+
+  if (!fs.existsSync(filePath)) {
+    return res.redirect('/content?tab=articles&msg=' + encodeURIComponent('Article not found'));
+  }
+
+  fs.unlinkSync(filePath);
+  res.redirect('/content?tab=articles&msg=' + encodeURIComponent(`Article "${slug}" deleted`));
+});
+
+// ─── Trend Research actions ─────────────────────────────────
+
+router.post('/content/trend-research/run', (req, res) => {
+  const site = getActiveSite(null);
+  const env = { ...process.env };
+  if (!site.isLegacy) env.ACTIVE_SITE = site.id;
+
+  const child = spawn('node', ['scripts/trend-research.js'], { cwd: ROOT, env });
+  child.on('close', (code) => {
+    const engineFile = path.join(site.dataDir, 'content-engine.json');
+    const existing = readJson(engineFile);
+    if (!existing.trendResearch) existing.trendResearch = {};
+    existing.trendResearch.lastRunDate = new Date().toISOString();
+    writeJson(engineFile, existing);
+
+    const msg = code === 0 ? 'Trend research complete' : 'Trend research failed';
+    res.redirect('/content?tab=engine&msg=' + encodeURIComponent(msg));
+  });
+  child.on('error', () => {
+    res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Trend research failed to start'));
+  });
+});
+
+router.post('/content/engine/trend-prompt', (req, res) => {
+  const site = getActiveSite(null);
+  const engineFile = path.join(site.dataDir, 'content-engine.json');
+  const existing = readJson(engineFile);
+
+  if (!existing.trendResearch) existing.trendResearch = {};
+  existing.trendResearch.systemPrompt = req.body.trendSystemPrompt || '';
+
+  writeJson(engineFile, existing);
+  res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Trend research prompt saved'));
 });
 
 // ─── Content Engine actions ──────────────────────────────────

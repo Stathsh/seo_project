@@ -20,8 +20,8 @@ const app = express();
 const PORT = process.env.DASHBOARD_PORT || 3456;
 
 // Body parsing
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+app.use(express.json({ limit: '2mb' }));
 
 // Session & auth
 app.use(sessionMiddleware());
