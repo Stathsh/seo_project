@@ -366,7 +366,16 @@ function engineTab(config, articles, apiUsage) {
   const schedule = config.schedule || {};
   const prompts = config.prompts || {};
   const trendResearch = config.trendResearch || {};
+  const defaultTrendPrompt = 'You are an expert SEO keyword researcher specializing in smart home and consumer electronics. You generate practical, search-optimized keyword ideas that real people search for. Always return valid YAML.';
   const calls = (apiUsage && Array.isArray(apiUsage.calls)) ? apiUsage.calls : [];
+
+  // --- Trend research prompts (multi-prompt support) ---
+  const trendPrompts = Array.isArray(trendResearch.prompts) ? trendResearch.prompts : [];
+  const activePromptId = trendResearch.activePromptId || null;
+  // Migration: if old single systemPrompt exists and no prompts array, show it as a legacy entry
+  if (trendPrompts.length === 0 && trendResearch.systemPrompt) {
+    trendPrompts.push({ id: 'legacy', name: 'Default Prompt', prompt: trendResearch.systemPrompt });
+  }
 
   // --- Activity stats ---
   const sorted = [...articles].sort((a, b) =>
@@ -402,12 +411,19 @@ function engineTab(config, articles, apiUsage) {
     { id: 'faq', label: 'FAQ', desc: 'Template for FAQ generation. Use {{KEYWORD}} as a placeholder.' },
   ];
 
+  const chevron = `<svg class="engine-chevron w-5 h-5 text-gray-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+
   return `
-    <!-- Activity & Status -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+    <style>
+      .engine-section[open] .engine-chevron { transform: rotate(180deg); }
+      .engine-section summary { list-style: none; cursor: pointer; }
+      .engine-section summary::-webkit-details-marker { display: none; }
+    </style>
+
+    <!-- Activity & Status (always open) -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-3">
       <h2 class="text-lg font-semibold text-gray-900 mb-1">Activity & Status</h2>
       <p class="text-sm text-gray-500 mb-4">Recent content generation activity.</p>
-
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-gray-50 rounded-lg p-4">
           <p class="text-xs font-medium text-gray-500 uppercase mb-1">Last Article</p>
@@ -429,193 +445,325 @@ function engineTab(config, articles, apiUsage) {
       </div>
     </div>
 
-    <!-- Trend Research -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-      <div class="flex items-center justify-between mb-1">
-        <h2 class="text-lg font-semibold text-gray-900">Trend Research</h2>
-        <form method="POST" action="/content/trend-research/run" class="inline">
-          <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors">
-            Run Trend Research
-          </button>
-        </form>
-      </div>
-      <p class="text-sm text-gray-500 mb-4">
-        Run AI-powered trend analysis to discover new keyword opportunities.
-        ${trendResearch.lastRunDate
-          ? `Last run: ${formatDate(trendResearch.lastRunDate)} (${relativeTime(trendResearch.lastRunDate)})`
-          : 'Never run from dashboard.'}
-      </p>
-
-      <form method="POST" action="/content/engine/trend-prompt">
-        <label class="block text-sm font-medium text-gray-700 mb-1">System Prompt</label>
-        <p class="text-xs text-gray-400 mb-2">The system prompt sent to Claude when generating trend keywords.</p>
-        <textarea name="trendSystemPrompt" rows="6"
-          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono leading-relaxed focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
-        >${escHtml(trendResearch.systemPrompt || '')}</textarea>
-        <div class="flex justify-end mt-2">
-          <button type="submit" class="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-            Save Trend Prompt
-          </button>
+    <!-- Trend Research (collapsible) -->
+    <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3">
+      <summary class="flex items-center justify-between p-5">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Trend Research</h2>
+          <p class="text-xs text-gray-400 mt-0.5">
+            ${trendResearch.lastRunDate
+              ? `Last run: ${formatDate(trendResearch.lastRunDate)} (${relativeTime(trendResearch.lastRunDate)})`
+              : 'Never run from dashboard'}
+            &middot; ${trendPrompts.length} prompt${trendPrompts.length !== 1 ? 's' : ''} saved
+          </p>
         </div>
-      </form>
-    </div>
-
-    <!-- API Usage -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-1">API Usage</h2>
-      <p class="text-sm text-gray-500 mb-4">Token usage and estimated costs for Claude API calls.</p>
-
-      ${calls.length > 0 ? `
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-          <div class="bg-gray-50 rounded-lg p-3">
-            <p class="text-xs font-medium text-gray-500 uppercase">Total Calls</p>
-            <p class="text-xl font-bold text-gray-900">${calls.length.toLocaleString()}</p>
-          </div>
-          <div class="bg-gray-50 rounded-lg p-3">
-            <p class="text-xs font-medium text-gray-500 uppercase">Input Tokens</p>
-            <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').inputTokens.toLocaleString()}</p>
-          </div>
-          <div class="bg-gray-50 rounded-lg p-3">
-            <p class="text-xs font-medium text-gray-500 uppercase">Output Tokens</p>
-            <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').outputTokens.toLocaleString()}</p>
-          </div>
-          <div class="bg-gray-50 rounded-lg p-3">
-            <p class="text-xs font-medium text-gray-500 uppercase">Est. Cost</p>
-            <p class="text-xl font-bold text-green-600">$${usageStats.find(s => s.label === 'All Time').cost.toFixed(2)}</p>
-          </div>
+        ${chevron}
+      </summary>
+      <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-sm text-gray-500">Run AI-powered trend analysis to discover new keyword opportunities.</p>
+          <form method="POST" action="/content/trend-research/run" class="inline flex-shrink-0 ml-4">
+            <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors">
+              Run Trend Research
+            </button>
+          </form>
         </div>
 
-        <div class="overflow-hidden rounded-lg border border-gray-200">
-          <table class="min-w-full text-sm">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Period</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calls</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Input</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Output</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              ${usageStats.map(s => `
-                <tr>
-                  <td class="px-4 py-2 font-medium text-gray-700">${s.label}</td>
-                  <td class="px-4 py-2 text-gray-600">${s.calls.toLocaleString()}</td>
-                  <td class="px-4 py-2 text-gray-600">${s.inputTokens.toLocaleString()}</td>
-                  <td class="px-4 py-2 text-gray-600">${s.outputTokens.toLocaleString()}</td>
-                  <td class="px-4 py-2 text-gray-600">$${s.cost.toFixed(2)}</td>
-                </tr>
+        <!-- Saved Prompts -->
+        <div class="mb-4">
+          <h3 class="text-sm font-semibold text-gray-700 mb-2">System Prompts</h3>
+          ${trendPrompts.length > 0 ? `
+            <div class="space-y-2">
+              ${trendPrompts.map(tp => `
+                <div class="flex items-start gap-3 p-3 rounded-lg border ${tp.id === activePromptId ? 'border-brand-300 bg-brand-50' : 'border-gray-200 bg-gray-50'}">
+                  <form method="POST" action="/content/trend-prompts/activate" class="flex-shrink-0 mt-0.5">
+                    <input type="hidden" name="promptId" value="${escHtml(tp.id)}" />
+                    <button type="submit" class="block">
+                      <div class="w-4 h-4 rounded-full border-2 ${tp.id === activePromptId ? 'border-brand-600 bg-brand-600' : 'border-gray-400 bg-white'} flex items-center justify-center">
+                        ${tp.id === activePromptId ? '<div class="w-1.5 h-1.5 rounded-full bg-white"></div>' : ''}
+                      </div>
+                    </button>
+                  </form>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm font-medium text-gray-900">${escHtml(tp.name)}</p>
+                      ${tp.id === activePromptId ? '<span class="text-xs bg-brand-100 text-brand-700 px-1.5 py-0.5 rounded">Active</span>' : ''}
+                    </div>
+                    <p class="text-xs text-gray-400 mt-0.5 truncate">${escHtml(tp.prompt.substring(0, 120))}${tp.prompt.length > 120 ? '...' : ''}</p>
+                  </div>
+                  <div class="flex items-center gap-1 flex-shrink-0">
+                    <button type="button" onclick="editTrendPrompt('${escHtml(tp.id)}', '${escAttr(tp.name)}', this)"
+                      data-prompt="${escHtml(tp.prompt)}"
+                      class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded hover:bg-gray-300 transition-colors">Edit</button>
+                    <form method="POST" action="/content/trend-prompts/delete" class="inline"
+                      onsubmit="return confirm('Delete this prompt?')">
+                      <input type="hidden" name="promptId" value="${escHtml(tp.id)}" />
+                      <button type="submit" class="text-xs bg-red-50 text-red-600 px-2 py-1 rounded hover:bg-red-100 transition-colors">Delete</button>
+                    </form>
+                  </div>
+                </div>
               `).join('')}
-            </tbody>
-          </table>
+            </div>
+          ` : `
+            <p class="text-sm text-gray-400 italic">No prompts saved. Add one below or use the default.</p>
+          `}
         </div>
-      ` : `
-        <div class="bg-gray-50 rounded-lg p-6 text-center">
-          <p class="text-sm text-gray-400">No usage data yet. API usage will be tracked when articles are generated.</p>
+
+        <!-- Add / Edit Prompt Form -->
+        <div id="trend-prompt-form" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <h3 id="trend-form-title" class="text-sm font-semibold text-gray-700 mb-3">Add New Prompt</h3>
+          <form method="POST" action="/content/trend-prompts/save">
+            <input type="hidden" id="trend-edit-id" name="promptId" value="" />
+            <div class="mb-3">
+              <label class="block text-xs font-medium text-gray-500 mb-1">Prompt Name</label>
+              <input id="trend-prompt-name" name="promptName" required placeholder="e.g. Holiday Season Research"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500" />
+            </div>
+            <div class="mb-3">
+              <label class="block text-xs font-medium text-gray-500 mb-1">System Prompt</label>
+              <textarea id="trend-prompt-text" name="promptText" rows="6" required
+                placeholder="${escHtml(defaultTrendPrompt)}"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono leading-relaxed focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+              ></textarea>
+            </div>
+            <div class="flex items-center justify-between">
+              <button type="button" id="trend-cancel-edit" onclick="cancelTrendEdit()" class="text-xs text-gray-500 hover:text-gray-700 hidden">Cancel edit</button>
+              <button type="submit" class="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors ml-auto">
+                <span id="trend-form-submit-text">Add Prompt</span>
+              </button>
+            </div>
+          </form>
         </div>
-      `}
-    </div>
+      </div>
+    </details>
+
+    <!-- API Usage (collapsible) -->
+    <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3">
+      <summary class="flex items-center justify-between p-5">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">API Usage</h2>
+          <p class="text-xs text-gray-400 mt-0.5">
+            ${calls.length > 0
+              ? `${calls.length} API calls &middot; Est. $${usageStats.find(s => s.label === 'All Time').cost.toFixed(2)} total`
+              : 'No usage data yet'}
+          </p>
+        </div>
+        ${chevron}
+      </summary>
+      <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+        ${calls.length > 0 ? `
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+            <div class="bg-gray-50 rounded-lg p-3">
+              <p class="text-xs font-medium text-gray-500 uppercase">Total Calls</p>
+              <p class="text-xl font-bold text-gray-900">${calls.length.toLocaleString()}</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3">
+              <p class="text-xs font-medium text-gray-500 uppercase">Input Tokens</p>
+              <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').inputTokens.toLocaleString()}</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3">
+              <p class="text-xs font-medium text-gray-500 uppercase">Output Tokens</p>
+              <p class="text-xl font-bold text-gray-900">${usageStats.find(s => s.label === 'All Time').outputTokens.toLocaleString()}</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3">
+              <p class="text-xs font-medium text-gray-500 uppercase">Est. Cost</p>
+              <p class="text-xl font-bold text-green-600">$${usageStats.find(s => s.label === 'All Time').cost.toFixed(2)}</p>
+            </div>
+          </div>
+          <div class="overflow-hidden rounded-lg border border-gray-200">
+            <table class="min-w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Period</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calls</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Input</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Output</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                ${usageStats.map(s => `
+                  <tr>
+                    <td class="px-4 py-2 font-medium text-gray-700">${s.label}</td>
+                    <td class="px-4 py-2 text-gray-600">${s.calls.toLocaleString()}</td>
+                    <td class="px-4 py-2 text-gray-600">${s.inputTokens.toLocaleString()}</td>
+                    <td class="px-4 py-2 text-gray-600">${s.outputTokens.toLocaleString()}</td>
+                    <td class="px-4 py-2 text-gray-600">$${s.cost.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : `
+          <div class="bg-gray-50 rounded-lg p-6 text-center">
+            <p class="text-sm text-gray-400">No usage data yet. API usage will be tracked when articles are generated.</p>
+          </div>
+        `}
+      </div>
+    </details>
 
     <form method="POST" action="/content/engine">
 
-      <!-- AI Model Settings -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-1">AI Model Settings</h2>
-        <p class="text-sm text-gray-500 mb-4">Configure which AI model powers your content generation.</p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- AI Model Settings (collapsible) -->
+      <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3" open>
+        <summary class="flex items-center justify-between p-5">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
-            <select name="model" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-              ${models.map(m => `
-                <option value="${m.value}" ${model === m.value ? 'selected' : ''}>${m.label}</option>
-              `).join('')}
-            </select>
+            <h2 class="text-lg font-semibold text-gray-900">AI Model Settings</h2>
+            <p class="text-xs text-gray-400 mt-0.5">${models.find(m => m.value === model)?.label || model}</p>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Max Tokens (Articles)</label>
-            <input name="maxTokens" type="number" value="${maxTokens}" min="1000" max="8192" step="256"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Max Tokens (FAQ)</label>
-            <input name="faqMaxTokens" type="number" value="${faqMaxTokens}" min="500" max="4096" step="100"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
-            <input name="apiKey" type="password" value="${hasApiKey ? config.apiKey : ''}"
-              placeholder="${hasApiKey ? '••••••••' : 'Uses .env key if empty'}"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            <p class="text-xs text-gray-400 mt-1">${hasApiKey ? 'Custom key set' : 'Using ANTHROPIC_API_KEY from .env'}</p>
+          ${chevron}
+        </summary>
+        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
+              <select name="model" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                ${models.map(m => `
+                  <option value="${m.value}" ${model === m.value ? 'selected' : ''}>${m.label}</option>
+                `).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Max Tokens (Articles)</label>
+              <input name="maxTokens" type="number" value="${maxTokens}" min="1000" max="8192" step="256"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Max Tokens (FAQ)</label>
+              <input name="faqMaxTokens" type="number" value="${faqMaxTokens}" min="500" max="4096" step="100"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+              <input name="apiKey" type="password" value="${hasApiKey ? config.apiKey : ''}"
+                placeholder="${hasApiKey ? '••••••••' : 'Uses .env key if empty'}"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              <p class="text-xs text-gray-400 mt-1">${hasApiKey ? 'Custom key set' : 'Using ANTHROPIC_API_KEY from .env'}</p>
+            </div>
           </div>
         </div>
-      </div>
+      </details>
 
-      <!-- Schedule Settings -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-1">Schedule Settings</h2>
-        <p class="text-sm text-gray-500 mb-4">Control batch generation behavior for autopublish runs.</p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- Publishing Schedule (collapsible) -->
+      <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3">
+        <summary class="flex items-center justify-between p-5">
           <div>
-            <label class="flex items-center gap-2 text-sm font-medium text-gray-700">
-              <input name="schedule.enabled" type="checkbox" ${schedule.enabled ? 'checked' : ''}
-                class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
-              Enable Scheduled Generation
+            <h2 class="text-lg font-semibold text-gray-900">Publishing Schedule</h2>
+            <p class="text-xs mt-0.5 ${schedule.enabled ? 'text-green-600' : 'text-gray-400'}">
+              ${schedule.enabled ? `ON &middot; ${schedule.amount || 1} article${(schedule.amount || 1) !== 1 ? 's' : ''} ${schedule.frequency || 'daily'}` : 'OFF'}
+            </p>
+          </div>
+          ${chevron}
+        </summary>
+        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+          <div class="flex items-center justify-between p-4 rounded-lg ${schedule.enabled ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'} mb-4">
+            <div>
+              <p class="text-sm font-semibold ${schedule.enabled ? 'text-green-800' : 'text-gray-700'}">
+                ${schedule.enabled ? 'Autopublish is ON' : 'Autopublish is OFF'}
+              </p>
+              <p class="text-xs ${schedule.enabled ? 'text-green-600' : 'text-gray-400'} mt-0.5">
+                ${schedule.enabled ? 'Articles will be generated automatically.' : 'Enable to start generating on a schedule.'}
+              </p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input name="schedule.enabled" type="checkbox" ${schedule.enabled ? 'checked' : ''} class="sr-only peer" />
+              <div class="w-11 h-6 bg-gray-300 peer-focus:ring-2 peer-focus:ring-brand-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
             </label>
-            <p class="text-xs text-gray-400 mt-1">When enabled, autopublish will generate articles automatically.</p>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Articles Per Run</label>
-            <input name="schedule.articlesPerRun" type="number" value="${schedule.articlesPerRun || 1}" min="1" max="10"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            <p class="text-xs text-gray-400 mt-1">Maximum articles generated per batch (1-10).</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Publish</label>
+              <div class="flex items-center gap-2">
+                <input name="schedule.amount" type="number" value="${schedule.amount || 1}" min="1" max="${schedule.frequency === 'hourly' ? 2 : schedule.frequency === 'weekly' ? 20 : 5}"
+                  class="w-20 border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                <span class="text-sm text-gray-500">article${(schedule.amount || 1) !== 1 ? 's' : ''}</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Frequency</label>
+              <select name="schedule.frequency" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                onchange="updateAmountMax(this.value)">
+                <option value="daily" ${(schedule.frequency || 'daily') === 'daily' ? 'selected' : ''}>Daily</option>
+                <option value="hourly" ${schedule.frequency === 'hourly' ? 'selected' : ''}>Hourly</option>
+                <option value="weekly" ${schedule.frequency === 'weekly' ? 'selected' : ''}>Weekly</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Delay Between Articles (ms)</label>
-            <input name="schedule.delayBetweenMs" type="number" value="${schedule.delayBetweenMs || 2000}" min="500" max="30000" step="500"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            <p class="text-xs text-gray-400 mt-1">Pause between API calls to avoid rate limits.</p>
-          </div>
+          <p class="text-xs text-gray-400 mt-3">Hourly (1-2), Daily (1-5), Weekly (1-20).</p>
         </div>
-      </div>
+      </details>
 
-      <!-- Prompt Templates -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-1">Prompt Templates</h2>
-        <p class="text-sm text-gray-500 mb-4">Edit the AI prompts used for each article type. The base prompt is combined with the type-specific prompt.</p>
+      <script>
+        function updateAmountMax(freq) {
+          const input = document.querySelector('input[name="schedule.amount"]');
+          const limits = { hourly: 2, daily: 5, weekly: 20 };
+          input.max = limits[freq] || 5;
+          if (parseInt(input.value) > parseInt(input.max)) input.value = input.max;
+        }
+      </script>
 
-        <!-- Prompt sub-tabs -->
-        <div class="flex flex-wrap gap-2 mb-4">
+      <!-- Prompt Templates (collapsible) -->
+      <details class="engine-section bg-white rounded-lg border border-gray-200 mb-3">
+        <summary class="flex items-center justify-between p-5">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900">Prompt Templates</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Article generation prompts for each content type</p>
+          </div>
+          ${chevron}
+        </summary>
+        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+          <p class="text-sm text-gray-500 mb-4">The base prompt is combined with the type-specific prompt for each article.</p>
+
+          <div class="flex flex-wrap gap-2 mb-4">
+            ${promptTabs.map((t, i) => `
+              <button type="button" data-prompt="${t.id}"
+                class="prompt-tab-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  i === 0 ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }">
+                ${t.label}
+              </button>
+            `).join('')}
+          </div>
+
           ${promptTabs.map((t, i) => `
-            <button type="button" data-prompt="${t.id}"
-              class="prompt-tab-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                i === 0 ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }">
-              ${t.label}
-            </button>
+            <div id="prompt-${t.id}" class="prompt-panel ${i > 0 ? 'hidden' : ''}">
+              <p class="text-sm text-gray-500 mb-2">${t.desc}</p>
+              <textarea name="prompts.${t.id}" rows="12"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono leading-relaxed focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+              >${escHtml(prompts[t.id] || '')}</textarea>
+            </div>
           `).join('')}
         </div>
-
-        <!-- Prompt panels -->
-        ${promptTabs.map((t, i) => `
-          <div id="prompt-${t.id}" class="prompt-panel ${i > 0 ? 'hidden' : ''}">
-            <p class="text-sm text-gray-500 mb-2">${t.desc}</p>
-            <textarea name="prompts.${t.id}" rows="12"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono leading-relaxed focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
-            >${escHtml(prompts[t.id] || '')}</textarea>
-          </div>
-        `).join('')}
-      </div>
+      </details>
 
       <!-- Save -->
-      <div class="flex justify-end">
+      <div class="flex justify-end mt-4">
         <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-brand-700 transition-colors">
           Save Settings
         </button>
       </div>
     </form>
+
+    <script>
+      function editTrendPrompt(id, name, btn) {
+        document.getElementById('trend-edit-id').value = id;
+        document.getElementById('trend-prompt-name').value = name;
+        document.getElementById('trend-prompt-text').value = btn.getAttribute('data-prompt');
+        document.getElementById('trend-form-title').textContent = 'Edit Prompt';
+        document.getElementById('trend-form-submit-text').textContent = 'Update Prompt';
+        document.getElementById('trend-cancel-edit').classList.remove('hidden');
+        document.getElementById('trend-prompt-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      function cancelTrendEdit() {
+        document.getElementById('trend-edit-id').value = '';
+        document.getElementById('trend-prompt-name').value = '';
+        document.getElementById('trend-prompt-text').value = '';
+        document.getElementById('trend-form-title').textContent = 'Add New Prompt';
+        document.getElementById('trend-form-submit-text').textContent = 'Add Prompt';
+        document.getElementById('trend-cancel-edit').classList.add('hidden');
+      }
+    </script>
   `;
 }
 
@@ -692,4 +840,9 @@ function computeUsageStats(calls) {
 function escHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function escAttr(str) {
+  if (!str) return '';
+  return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
 }

@@ -290,6 +290,13 @@ async function main() {
   console.log('\n🤖 Autopublish');
   console.log('─'.repeat(50));
 
+  // Respect the dashboard schedule toggle
+  const schedule = engineConfig.schedule || {};
+  if (!schedule.enabled && !dryRun) {
+    console.log('Autopublish is disabled. Enable it in the dashboard under Content Engine → Publishing Schedule.');
+    process.exit(0);
+  }
+
   const pending = findPendingKeywords();
 
   if (pending.length === 0) {

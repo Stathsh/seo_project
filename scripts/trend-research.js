@@ -151,8 +151,16 @@ async function main() {
   if (fs.existsSync(ENGINE_FILE)) {
     try { engineConfig = JSON.parse(fs.readFileSync(ENGINE_FILE, 'utf-8')); } catch {}
   }
-  const system = engineConfig.trendResearch?.systemPrompt ||
-    `You are an expert SEO keyword researcher specializing in smart home and consumer electronics. You generate practical, search-optimized keyword ideas that real people search for. Always return valid YAML.`;
+  const defaultPrompt = `You are an expert SEO keyword researcher specializing in smart home and consumer electronics. You generate practical, search-optimized keyword ideas that real people search for. Always return valid YAML.`;
+  // Multi-prompt support: find the active prompt, fallback to legacy single prompt, then default
+  const tr = engineConfig.trendResearch || {};
+  let system = defaultPrompt;
+  if (Array.isArray(tr.prompts) && tr.prompts.length > 0) {
+    const active = tr.prompts.find(p => p.id === tr.activePromptId) || tr.prompts[0];
+    system = active.prompt || defaultPrompt;
+  } else if (tr.systemPrompt) {
+    system = tr.systemPrompt;
+  }
 
   const prompt = buildResearchPrompt(existingKeywords, products, categories, topic, count);
 

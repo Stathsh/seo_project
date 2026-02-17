@@ -215,16 +215,73 @@ router.post('/content/trend-research/run', (req, res) => {
   });
 });
 
-router.post('/content/engine/trend-prompt', (req, res) => {
+router.post('/content/trend-prompts/save', (req, res) => {
   const site = getActiveSite(null);
   const engineFile = path.join(site.dataDir, 'content-engine.json');
   const existing = readJson(engineFile);
 
   if (!existing.trendResearch) existing.trendResearch = {};
-  existing.trendResearch.systemPrompt = req.body.trendSystemPrompt || '';
+  if (!Array.isArray(existing.trendResearch.prompts)) existing.trendResearch.prompts = [];
+
+  const { promptId, promptName, promptText } = req.body;
+  const name = (promptName || '').trim();
+  const text = (promptText || '').trim();
+
+  if (!name || !text) {
+    return res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Name and prompt text are required'));
+  }
+
+  if (promptId) {
+    // Update existing prompt
+    const idx = existing.trendResearch.prompts.findIndex(p => p.id === promptId);
+    if (idx !== -1) {
+      existing.trendResearch.prompts[idx].name = name;
+      existing.trendResearch.prompts[idx].prompt = text;
+    }
+  } else {
+    // Add new prompt
+    const id = Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+    existing.trendResearch.prompts.push({ id, name, prompt: text });
+    // Auto-activate if it's the first prompt
+    if (existing.trendResearch.prompts.length === 1) {
+      existing.trendResearch.activePromptId = id;
+    }
+  }
 
   writeJson(engineFile, existing);
-  res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Trend research prompt saved'));
+  res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Prompt saved'));
+});
+
+router.post('/content/trend-prompts/activate', (req, res) => {
+  const site = getActiveSite(null);
+  const engineFile = path.join(site.dataDir, 'content-engine.json');
+  const existing = readJson(engineFile);
+
+  if (!existing.trendResearch) existing.trendResearch = {};
+  existing.trendResearch.activePromptId = req.body.promptId || null;
+
+  writeJson(engineFile, existing);
+  res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Active prompt updated'));
+});
+
+router.post('/content/trend-prompts/delete', (req, res) => {
+  const site = getActiveSite(null);
+  const engineFile = path.join(site.dataDir, 'content-engine.json');
+  const existing = readJson(engineFile);
+
+  if (!existing.trendResearch) existing.trendResearch = {};
+  if (!Array.isArray(existing.trendResearch.prompts)) existing.trendResearch.prompts = [];
+
+  const { promptId } = req.body;
+  existing.trendResearch.prompts = existing.trendResearch.prompts.filter(p => p.id !== promptId);
+
+  // Clear activePromptId if the deleted prompt was active
+  if (existing.trendResearch.activePromptId === promptId) {
+    existing.trendResearch.activePromptId = existing.trendResearch.prompts[0]?.id || null;
+  }
+
+  writeJson(engineFile, existing);
+  res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Prompt deleted'));
 });
 
 // ─── Content Engine actions ──────────────────────────────────
@@ -234,6 +291,13 @@ router.post('/content/engine', (req, res) => {
   const engineFile = path.join(site.dataDir, 'content-engine.json');
   const existing = readJson(engineFile);
 
+  // Compute articlesPerRun from the friendly schedule fields
+  const frequency = req.body['schedule.frequency'] || existing.schedule?.frequency || 'daily';
+  const amount = parseInt(req.body['schedule.amount'], 10) || existing.schedule?.amount || 1;
+  // Enforce limits per frequency
+  const maxAmounts = { hourly: 2, daily: 5, weekly: 20 };
+  const clampedAmount = Math.min(amount, maxAmounts[frequency] || 5);
+
   const updated = {
     model: req.body.model || existing.model || 'claude-sonnet-4-20250514',
     maxTokens: parseInt(req.body.maxTokens, 10) || existing.maxTokens || 4096,
@@ -241,8 +305,10 @@ router.post('/content/engine', (req, res) => {
     apiKey: req.body.apiKey !== undefined ? req.body.apiKey : (existing.apiKey || ''),
     schedule: {
       enabled: req.body['schedule.enabled'] === 'on',
-      articlesPerRun: parseInt(req.body['schedule.articlesPerRun'], 10) || existing.schedule?.articlesPerRun || 1,
-      delayBetweenMs: parseInt(req.body['schedule.delayBetweenMs'], 10) || existing.schedule?.delayBetweenMs || 2000,
+      frequency,
+      amount: clampedAmount,
+      articlesPerRun: clampedAmount,
+      delayBetweenMs: 3000,
     },
     prompts: {
       base: req.body['prompts.base'] || existing.prompts?.base || '',
@@ -252,6 +318,11 @@ router.post('/content/engine', (req, res) => {
       faq: req.body['prompts.faq'] || existing.prompts?.faq || '',
     },
   };
+
+  // Preserve trendResearch settings
+  if (existing.trendResearch) {
+    updated.trendResearch = existing.trendResearch;
+  }
 
   writeJson(engineFile, updated);
   res.redirect('/content?tab=engine&msg=Content engine settings saved');
