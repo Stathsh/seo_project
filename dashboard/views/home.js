@@ -1,14 +1,9 @@
-export function homePage({ articles, keywords, products, totalWords, siteName }) {
+export function homePage({ articles, products, totalWords, siteName }) {
   const byType = { 'best-for': 0, vs: 0, info: 0 };
   const byCategory = {};
   articles.forEach(a => {
     if (a.type) byType[a.type] = (byType[a.type] || 0) + 1;
     if (a.category) byCategory[a.category] = (byCategory[a.category] || 0) + 1;
-  });
-
-  const pendingKeywords = keywords.filter(k => {
-    const slugs = articles.map(a => a.slug);
-    return !slugs.includes(k.slug);
   });
 
   const avgWords = articles.length > 0 ? Math.round(totalWords / articles.length) : 0;
@@ -48,16 +43,6 @@ export function homePage({ articles, keywords, products, totalWords, siteName })
       </div>
     </div>
 
-    <!-- Pending keywords summary -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-gray-900">Pending Keywords</h2>
-        <a href="/content?tab=keywords" class="text-sm text-brand-600 font-medium hover:text-brand-700">View all &rarr;</a>
-      </div>
-      ${pendingKeywords.length > 0 ? `
-        <p class="text-sm text-gray-500 mt-2">${pendingKeywords.length} keyword${pendingKeywords.length !== 1 ? 's' : ''} waiting for article generation.</p>
-      ` : '<p class="text-sm text-gray-400 mt-2">All keywords have articles generated</p>'}
-    </div>
   `;
 }
 
@@ -85,11 +70,3 @@ function typeBar(label, count, total, bgColor) {
   `;
 }
 
-function typeColor(type) {
-  switch (type) {
-    case 'best-for': return 'bg-green-100 text-green-700';
-    case 'vs': return 'bg-purple-100 text-purple-700';
-    case 'info': return 'bg-blue-100 text-blue-700';
-    default: return 'bg-gray-100 text-gray-700';
-  }
-}
