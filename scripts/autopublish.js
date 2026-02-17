@@ -16,6 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import dotenv from 'dotenv';
+import { spawn as spawnProcess } from 'child_process';
 import { generateWithRetry } from './utils/claude-client.js';
 import { resolveSite } from './resolve-site.js';
 
@@ -69,6 +70,29 @@ function parseArgs() {
   }
 
   return { count: Math.max(1, Math.min(count, 10)), dryRun, force };
+}
+
+// ─── Run trend research as a subprocess ─────────────────────────
+
+const PROJECT_ROOT = path.resolve(import.meta.dirname, '..');
+
+function runTrendResearch(count) {
+  return new Promise((resolve) => {
+    const env = { ...process.env };
+    const child = spawnProcess('node', ['scripts/trend-research.js', '--count', String(count)], {
+      cwd: PROJECT_ROOT,
+      env,
+      stdio: 'inherit',
+    });
+    child.on('close', (code) => {
+      if (code !== 0) console.log('Trend research exited with code', code);
+      resolve();
+    });
+    child.on('error', (err) => {
+      console.log('Failed to run trend research:', err.message);
+      resolve();
+    });
+  });
 }
 
 // ─── Find pending keywords ──────────────────────────────────────
@@ -307,6 +331,15 @@ async function main() {
   if (!schedule.enabled && !dryRun && !force) {
     console.log('Autopublish is disabled. Enable it in the dashboard under Content Engine → Publishing Schedule.');
     process.exit(0);
+  }
+
+  // Run trend research first if auto-run is enabled
+  const trendResearch = engineConfig.trendResearch || {};
+  if (trendResearch.autoRun && !dryRun) {
+    console.log('Running trend research first...\n');
+    const trendCount = schedule.articlesPerRun || schedule.amount || count;
+    await runTrendResearch(trendCount);
+    console.log('');
   }
 
   const pending = findPendingKeywords();

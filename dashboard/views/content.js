@@ -437,13 +437,36 @@ function engineTab(config, articles) {
       </summary>
       <div class="px-5 pb-5 border-t border-gray-100 pt-4">
         <div class="flex items-center justify-between mb-4">
-          <p class="text-sm text-gray-500">Run AI-powered trend analysis to discover new keyword opportunities.</p>
+          <p class="text-sm text-gray-500">Discover new keyword opportunities using AI trend analysis.</p>
           <form method="POST" action="/content/trend-research/run" class="inline flex-shrink-0 ml-4">
-            <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors">
-              Run Trend Research
+            <button type="submit" class="bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors inline-flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Run Now (${schedule.amount || 1} keyword${(schedule.amount || 1) !== 1 ? 's' : ''})
             </button>
           </form>
         </div>
+
+        <!-- Auto-run toggle -->
+        <form method="POST" action="/content/trend-research/settings" class="mb-4">
+          <div class="flex items-center justify-between p-4 rounded-lg ${trendResearch.autoRun ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'}">
+            <div>
+              <p class="text-sm font-semibold ${trendResearch.autoRun ? 'text-green-800' : 'text-gray-700'}">
+                ${trendResearch.autoRun ? 'Auto-research is ON' : 'Auto-research is OFF'}
+              </p>
+              <p class="text-xs ${trendResearch.autoRun ? 'text-green-600' : 'text-gray-400'} mt-0.5">
+                ${trendResearch.autoRun
+                  ? `Runs before each autopublish, generating ${schedule.amount || 1} keyword${(schedule.amount || 1) !== 1 ? 's' : ''} per run.`
+                  : 'Enable to automatically discover keywords before each article generation.'}
+              </p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input name="autoRun" type="checkbox" ${trendResearch.autoRun ? 'checked' : ''} class="sr-only peer" onchange="this.form.submit()" />
+              <div class="w-11 h-6 bg-gray-300 peer-focus:ring-2 peer-focus:ring-brand-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+            </label>
+          </div>
+        </form>
 
         <!-- Saved Prompts -->
         <div class="mb-4">

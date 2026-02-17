@@ -219,12 +219,15 @@ router.post('/content/autopublish/run', (req, res) => {
 
 router.post('/content/trend-research/run', (req, res) => {
   const site = getActiveSite(null);
+  const engineFile = path.join(site.dataDir, 'content-engine.json');
+  const engineConfig = readJson(engineFile);
+  const count = engineConfig.schedule?.amount || 1;
+
   const env = { ...process.env };
   if (!site.isLegacy) env.ACTIVE_SITE = site.id;
 
-  const child = spawn('node', ['scripts/trend-research.js'], { cwd: ROOT, env });
+  const child = spawn('node', ['scripts/trend-research.js', '--count', String(count)], { cwd: ROOT, env });
   child.on('close', (code) => {
-    const engineFile = path.join(site.dataDir, 'content-engine.json');
     const existing = readJson(engineFile);
     if (!existing.trendResearch) existing.trendResearch = {};
     existing.trendResearch.lastRunDate = new Date().toISOString();
@@ -236,6 +239,20 @@ router.post('/content/trend-research/run', (req, res) => {
   child.on('error', () => {
     res.redirect('/content?tab=engine&msg=' + encodeURIComponent('Trend research failed to start'));
   });
+});
+
+router.post('/content/trend-research/settings', (req, res) => {
+  const site = getActiveSite(null);
+  const engineFile = path.join(site.dataDir, 'content-engine.json');
+  const existing = readJson(engineFile);
+
+  if (!existing.trendResearch) existing.trendResearch = {};
+  existing.trendResearch.autoRun = req.body.autoRun === 'on';
+
+  writeJson(engineFile, existing);
+  res.redirect('/content?tab=engine&msg=' + encodeURIComponent(
+    existing.trendResearch.autoRun ? 'Auto-research enabled' : 'Auto-research disabled'
+  ));
 });
 
 router.post('/content/trend-prompts/save', (req, res) => {
