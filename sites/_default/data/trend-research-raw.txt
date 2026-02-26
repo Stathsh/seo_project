@@ -1,0 +1,25 @@
+keywords:
+  - type: best-for
+    keyword: "best smart thermostat for electric heat"
+    slug: "best-smart-thermostat-for-electric-heat"
+    category: "smart-thermostats"
+
+  - type: info
+    keyword: "how to fix smart doorbell not connecting to wifi after router reset"
+    slug: "how-to-fix-smart-doorbell-not-connecting-wifi-after-router-reset"
+    category: "smart-doorbells"
+
+  - type: vs
+    keyword: "wyze cam v3 vs blink mini 2 outdoor performance"
+    slug: "wyze-cam-v3-vs-blink-mini-2-outdoor-performance"
+    category: "security-cameras"
+
+  - type: best-for
+    keyword: "best robot vacuum for tile floors with grout"
+    slug: "best-robot-vacuum-for-tile-floors-with-grout"
+    category: "robot-vacuums"
+
+  - type: info
+    keyword: "smart home device firmware update schedule 2026"
+    slug: "smart-home-device-firmware-update-schedule-2026"
+    category: "smart-home-general"
