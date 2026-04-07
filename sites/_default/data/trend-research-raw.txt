@@ -1,25 +1,25 @@
 keywords:
   - type: best-for
-    keyword: "best smart thermostat for easter vacation automation"
-    slug: "best-smart-thermostat-for-easter-vacation-automation"
+    keyword: "best smart thermostat for tiny homes"
+    slug: "best-smart-thermostat-for-tiny-homes"
     category: "smart-thermostats"
 
   - type: vs
-    keyword: "ring indoor cam 2nd gen vs arlo pro 5 battery life"
-    slug: "ring-indoor-cam-2nd-gen-vs-arlo-pro-5-battery-life"
-    category: "security-cameras"
-
-  - type: info
-    keyword: "how to fix smart doorbell not working in april humidity"
-    slug: "how-to-fix-smart-doorbell-not-working-april-humidity"
-    category: "smart-doorbells"
-
-  - type: best-for
-    keyword: "best robot vacuum for april spring allergen removal"
-    slug: "best-robot-vacuum-for-april-spring-allergen-removal"
+    keyword: "roborock q revo maxv vs dreame l40 ultra complete"
+    slug: "roborock-q-revo-maxv-vs-dreame-l40-ultra-complete"
     category: "robot-vacuums"
 
   - type: info
-    keyword: "smart home device maintenance schedule for spring 2026"
-    slug: "smart-home-device-maintenance-schedule-spring-2026"
-    category: "smart-home-general"
+    keyword: "how to fix smart home devices after wifi 9 upgrade"
+    slug: "how-to-fix-smart-home-devices-after-wifi-9-upgrade"
+    category: "smart-hubs"
+
+  - type: best-for
+    keyword: "best smart doorbell for seniors with hearing issues"
+    slug: "best-smart-doorbell-for-seniors-with-hearing-issues"
+    category: "smart-doorbells"
+
+  - type: info
+    keyword: "smart thermostat compatibility with new energy star most efficient 2026"
+    slug: "smart-thermostat-compatibility-with-new-energy-star-most-efficient-2026"
+    category: "smart-thermostats"
